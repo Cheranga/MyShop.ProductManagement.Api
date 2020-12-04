@@ -27,10 +27,21 @@ namespace MyShop.ProductManagement.Api
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.SuppressMapClientErrors = true;
+                });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MyShop.ProductManagement.Api", Version = "v1" });
+            });
+
+            services.AddApiVersioning(options =>
+            {
+                options.ReportApiVersions = true;
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
             });
         }
 
