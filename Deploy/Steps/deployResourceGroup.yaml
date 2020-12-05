@@ -4,7 +4,7 @@ steps:
     inputs:
       deploymentScope: 'Subscription'
       azureResourceManagerConnection: '$(azureSubscription)'      
-      subscriptionId: '$(subscriptionId)'      
+      # subscriptionId: '$(subscriptionId)'      
       location: '$(rgLocation)'                    
       deploymentMode: 'Incremental'
       csmFile: '$(Pipeline.Workspace)/deploy/ResourceGroup/template.json'
