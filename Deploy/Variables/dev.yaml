@@ -1,0 +1,9 @@
+variables:
+- name: apiName
+  value: produtsapi  
+- name: environmentName
+  value: dev    
+- name: rgName
+  value: "rg-$(apiName)-$(environmentName)"
+- name: rgLocation
+  value: Australia Southeast  

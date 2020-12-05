@@ -25,3 +25,9 @@ steps:
     inputs:
       pathtoPublish: "$(Build.ArtifactStagingDirectory)"
       artifactName: "WebApp"
+
+  - task: PublishBuildArtifacts@1
+    displayName: "Copy ARM Templates"
+    inputs:
+      pathtoPublish: $(Build.Repository.LocalPath)/Deploy/Resources
+      artifactName: "deploy"      
