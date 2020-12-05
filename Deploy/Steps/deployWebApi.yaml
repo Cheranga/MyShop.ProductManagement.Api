@@ -1,0 +1,16 @@
+steps:
+  - task: AzureResourceManagerTemplateDeployment@3    
+    displayName: 'Create Web API'
+    inputs:
+      deploymentScope: 'Resource Group' 
+      azureResourceManagerConnection: '$(azureSubscription)' 
+      location: '$(rgLocation)' 
+      action: 'Create Or Update Resource Group' 
+      resourceGroupName: '$(rgName)'
+      deploymentMode: 'Incremental' 
+      csmFile: '$(Pipeline.Workspace)/deploy/API/template.json' 
+      csmParametersFile: '$(Pipeline.Workspace)/deploy/API/template.parameters.json' 
+      overrideParameters: |
+        -apiName "app-$(apiName)-$(environmentName)" 
+        -apiLocation "$(rgLocation)" 
+        -planName "plan-$(apiName)-$(environmentName)" 
