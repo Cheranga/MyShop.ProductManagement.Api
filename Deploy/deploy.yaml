@@ -1,3 +1,4 @@
 steps:
 
 - template: 'Steps/deployResourceGroup.yaml'
+- template: 'Steps/deployAppServicePlan.yaml'

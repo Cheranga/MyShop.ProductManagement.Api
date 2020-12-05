@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "planName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the app service plan."
+            }
+        },
+        "planLocation": {
+            "type":"string",
+            "metadata": {
+                "description": "The location where the app service plan resides."
+            }
+        }        
+    },
+    "functions": [],    
+    "resources": [
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "name": "[parameters('planName')]",
+            "location": "[parameters('planLocation')]",
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic"
+            },
+            "properties": {
+                "name": "[parameters('planName')]",
+                "computeMode": "Dynamic"
+            }
+        }
+    ]
+}
