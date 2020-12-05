@@ -7,3 +7,7 @@ variables:
   value: "rg-$(apiName)-$(environmentName)"
 - name: rgLocation
   value: Australia Southeast  
+- name: planSku
+  value: "S1"
+- name: planCapacity
+  value: 1  

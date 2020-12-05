@@ -13,4 +13,6 @@ steps:
       overrideParameters: |
         -planName "plan-$(apiName)-$(environmentName)" 
         -planLocation "$(rgLocation)" 
+        -sku "$(planSku)" 
+        -capacity "$(planCapacity)" 
       

@@ -7,6 +7,12 @@
         },
         "planLocation":{
             "value": "TBD"
+        },
+        "capacity": {
+            "value": 1 
+        },
+        "sku": {
+            "value": "TBD"
         }
     }
 }
