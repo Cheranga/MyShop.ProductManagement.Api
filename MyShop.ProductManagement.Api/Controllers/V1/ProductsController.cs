@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -8,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyShop.ProductManagement.Api.Requests;
 using MyShop.ProductManagement.Api.Responses;
 
-namespace MyShop.ProductManagement.Api.Controllers
+namespace MyShop.ProductManagement.Api.Controllers.V1
 {
     [ApiVersion("1.0")]
     [ApiController]
