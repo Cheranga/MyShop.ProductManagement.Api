@@ -17,4 +17,4 @@ steps:
     displayName: "Publish Build Artifact"
     inputs:
       pathtoPublish: "$(Build.ArtifactStagingDirectory)"
-      artifactName: "artifacts"
+      artifactName: "WebApp"
