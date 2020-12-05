@@ -3,8 +3,7 @@ steps:
     displayName: 'Create resource group'
     inputs:
       deploymentScope: 'Subscription'
-      azureResourceManagerConnection: '$(azureSubscription)'      
-      # subscriptionId: '$(subscriptionId)'      
+      azureResourceManagerConnection: '$(azureSubscription)'            
       location: '$(rgLocation)'                    
       deploymentMode: 'Incremental'
       csmFile: '$(Pipeline.Workspace)/deploy/ResourceGroup/template.json'
