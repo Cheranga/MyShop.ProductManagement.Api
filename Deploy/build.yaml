@@ -1,0 +1,20 @@
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: "Dotnet Build"
+    inputs:
+      command: "build"
+      projects: '**/*.csproj'
+
+  - task: DotNetCoreCLI@2
+    displayName: "Dotnet Publish"
+    inputs:
+      command: "publish"
+      publishWebProjects: true
+      arguments: "--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
+      zipAfterPublish: True
+
+  - task: PublishBuildArtifacts@1
+    displayName: "Publish Build Artifact"
+    inputs:
+      pathtoPublish: "$(Build.ArtifactStagingDirectory)"
+      artifactName: "artifacts"
