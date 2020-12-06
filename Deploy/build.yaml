@@ -1,9 +1,9 @@
 steps:
 
-  - task: UseDotNet@2
-    inputs:
-      version: '5.0.x'
-      packageType: runtime
+  # - task: UseDotNet@2
+  #   inputs:
+  #     version: '5.0.x'
+  #     packageType: runtime
 
   - task: DotNetCoreCLI@2
     displayName: "Dotnet Build"
