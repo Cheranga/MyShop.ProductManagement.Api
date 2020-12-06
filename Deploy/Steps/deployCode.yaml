@@ -6,7 +6,7 @@ steps:
       WebAppName: '$(apiName)'
       DeployToSlotFlag: true
       ResourceGroupName: '$(rgName)'
-      SlotName: staging
+      SlotName: Staging
       Package: '$(Pipeline.Workspace)/WebApp/MyShop.ProductManagement.Api.zip'
       ScriptType: 'Inline Script'
       enableXmlVariableSubstitution: true
