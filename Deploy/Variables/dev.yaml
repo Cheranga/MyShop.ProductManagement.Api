@@ -11,3 +11,7 @@ variables:
   value: "S1"
 - name: planCapacity
   value: 1  
+- name: aspNetCoreEnvironment
+  value: Development
+- name: webSiteTimeZone
+  value: AUS Eastern Standard Time  

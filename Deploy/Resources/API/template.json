@@ -8,117 +8,134 @@
         "apiLocation": {
             "type": "string"
         },
+        "rgName": {
+            "type": "string"
+        },
         "planName": {
             "type": "string"
+        },
+        "aspNetCoreEnvironment": {
+            "type": "string"
+        },
+        "websiteTimeZone": {
+            "type": "string",
+            "defaultValue": "AUS Eastern Standard Time"
         }
     },
-    "variables": {        
-        "applicationInsightsName": "[concat('appi-', parameters('apiName'))]",
-        // "apiKey": "[concat('@Microsoft.KeyVault(SecretUri=https://', parameters('keyVaultName'), '.vault.azure.net/secrets/apiKey/')]",
-        "timeZone": "AUS Eastern Standard Time"
+    "variables": {
+        "subscriptionId": "[subscription().subscriptionId]",
+        "fullWebAppUriForProductionSlot": "[concat(parameters('apiName'),'.azurewebsites.net')]",
+        "fullWebAppUriForStagingSlot": "[concat(parameters('apiName'),'.scm.azurewebsites.net')]"
     },
     "resources": [
         {
-            "apiVersion": "2015-08-01",
             "type": "Microsoft.Web/sites",
+            "apiVersion": "2019-08-01",
             "name": "[parameters('apiName')]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
             "location": "[parameters('apiLocation')]",
-            "kind": "app",
+            "properties": {
+                "name": "[parameters('apiName')]",
+                "serverFarmId": "[concat('/subscriptions/', variables('subscriptionId'), '/resourcegroups/', parameters('rgName'), '/providers/Microsoft.Web/serverfarms/', parameters('planName'))]",
+                "hostingEnvironment": null,
+                "hostNameSslStates": [
+                    {
+                        "name": "[variables('fullWebAppUriForProductionSlot')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[variables('fullWebAppUriForStagingSlot')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Repository"
+                    }
+                ],
+                "siteConfig": {
+                    "minTlsVersion": "1.2",
+                    "ftpsState": "Disabled",
+                    "metadata": [
+                        {
+                            "name": "CURRENT_STACK",
+                            "value": "dotnetcore"
+                        }
+                    ]
+                },
+                "httpsOnly": true,
+                "clientCertEnabled": "false",
+                "clientCertExclusionPaths": "",
+                "clientAffinityEnabled": false
+            },
             "resources": [
                 {
-                    "name": "slotConfigNames",
+                    "name": "appsettings",
                     "type": "config",
-                    "apiVersion": "2018-11-01",
+                    "apiVersion": "2019-08-01",
+                    "properties": {
+                        "ASPNETCORE_ENVIRONMENT": "[parameters('aspNetCoreEnvironment')]",
+                        "DIAGNOSTICS_AZUREBLOBCONTAINERSASURL": "",
+                        "DIAGNOSTICS_AZUREBLOBRETENTIONINDAYS": "90",
+                        "WEBSITE_TIME_ZONE": "[parameters('webSiteTimeZone')]"
+                    },
                     "dependsOn": [
                         "[resourceId('Microsoft.Web/Sites', parameters('apiName'))]"
-                    ],
-                    "tags": {
-                        "displayName": "slotConfigNames"
-                    },
-                    "properties": {
-                        "appSettingNames": [
-                            "CustomerApiKey"
-                        ]
-                    }
-                },
-                {
-                    "type": "config",
-                    "name": "appsettings",
-                    "apiVersion": "2018-11-01",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites', parameters('apiName'))]"
-                        // "[resourceId('microsoft.insights/components', variables('applicationInsightsName'))]"
-                    ],
-                    "properties": {
-                        "CustomerApiKey": "This is the production setting.",
-                        // "ApiKey": "[variables('apiKey')]",                        
-                        "WEBSITE_CONTENTSHARE": "[toLower(parameters('apiName'))]",
-                        "FUNCTIONS_EXTENSION_VERSION": "~3",
-                        // "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsightsName')), '2015-05-01').InstrumentationKey]",
-                        // "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-                        "WEBSITE_TIME_ZONE": "[variables('timeZone')]",
-                        "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG": 1
-                    }
+                    ]
                 }
-            ],
-            "properties": {
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('planName'))]"
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/slots",
-            "name": "[concat(parameters('apiName'),'/Staging')]",
-            "location": "[resourceGroup().location]",
-            "kind": "app",
-            "apiVersion": "2016-08-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('apiName'))]"
             ],
             "identity": {
                 "type": "systemAssigned"
             },
+            "tags": {
+                "[concat('hidden-related:', '/subscriptions/', variables('subscriptionId'),'/resourcegroups/', parameters('rgName'), '/providers/Microsoft.Web/serverfarms/', parameters('planName'))]": "empty"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/slots",
+            "kind": "app",
+            "name": "[concat(parameters('apiName'),'/Staging')]",
+            "apiVersion": "2019-08-01",
+            "location": "[parameters('apiLocation')]",
+            "scale": null,
             "properties": {
-                "serverFarmId": "[parameters('planName')]"
+                "enabled": true,
+                "serverFarmId": "[concat('/subscriptions/', variables('subscriptionId'),'/resourcegroups/', parameters('rgName'), '/providers/Microsoft.Web/serverfarms/', parameters('planName'))]",
+                "reserved": false,
+                "scmSiteAlsoStopped": false,
+                "hostingEnvironmentProfile": null,
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "cloningInfo": null
             },
             "resources": [
                 {
                     "name": "appsettings",
                     "type": "config",
-                    "apiVersion": "2016-08-01",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites/Slots', parameters('apiName'), 'Staging')]"
-                        // "[concat('microsoft.insights/components/',variables('applicationInsightsName'))]"
-                    ],
+                    "apiVersion": "2019-08-01",
                     "properties": {
-                        "CustomerApiKey": "This is the staging setting.",
-                        // "ApiKey": "[variables('apiKey')]",
-                        "OrdersApiKey": "This is a new configuration setting.",                        
-                        "WEBSITE_CONTENTSHARE": "[toLower(parameters('apiName'))]",
-                        "FUNCTIONS_EXTENSION_VERSION": "~3",
-                        // "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsightsName')), '2015-05-01').InstrumentationKey]",
-                        // "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-                        "WEBSITE_TIME_ZONE": "[variables('timeZone')]",
-                        "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG": 1
-                    }
+                        "ASPNETCORE_ENVIRONMENT": "[parameters('aspNetCoreEnvironment')]",
+                        "DIAGNOSTICS_AZUREBLOBCONTAINERSASURL": "",
+                        "DIAGNOSTICS_AZUREBLOBRETENTIONINDAYS": "90",                        
+                        "WEBSITE_TIME_ZONE": "[parameters('webSiteTimeZone')]"
+                    },
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites/slots',parameters('apiName'),'Staging')]"
+                    ]
                 }
+            ],
+            "identity": {
+                "type": "systemAssigned"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('apiName'))]"
             ]
         }
-        // {
-        //     "apiVersion": "2018-05-01-preview",
-        //     "name": "[variables('applicationInsightsName')]",
-        //     "type": "microsoft.insights/components",
-        //     "kind": "web",
-        //     "location": "[resourceGroup().location]",
-        //     "tags": {
-        //         "[concat('hidden-link:', resourceId('Microsoft.Web/sites', variables('applicationInsightsName')))]": "Resource"
-        //     },
-        //     "properties": {
-        //         "Application_Type": "web",
-        //         "ApplicationId": "[variables('applicationInsightsName')]"
-        //     }
-        // }
+
     ]
 }

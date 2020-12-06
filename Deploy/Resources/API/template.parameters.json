@@ -10,6 +10,15 @@
         },
         "apiLocation":{
             "value": "TBD"
+        },
+        "rgName": {
+            "value": "TBD"
+        },
+        "aspNetCoreEnvironment": {
+            "value": "TBD"
+        },
+        "websiteTimeZone": {
+            "value": "AUS Eastern Standard Time"
         }
     }
 }

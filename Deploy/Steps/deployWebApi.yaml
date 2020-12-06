@@ -13,4 +13,7 @@ steps:
       overrideParameters: |
         -apiName "app-$(apiName)-$(environmentName)" 
         -apiLocation "$(rgLocation)" 
+        -rgName "$(rgName)" 
         -planName "plan-$(apiName)-$(environmentName)" 
+        -aspNetCoreEnvironment "$(aspNetCoreEnvironment)" 
+        -websiteTimeZone "$(webSiteTimeZone)" 
