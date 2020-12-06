@@ -3,10 +3,10 @@ steps:
     displayName: 'Deploy to Staging'
     inputs:
       azureSubscription: '$(azureSubscription)'
-      WebAppName: '$(apiName)'
+      WebAppName: 'app-$(apiName)-$(environmentName)'
       DeployToSlotFlag: true
       ResourceGroupName: '$(rgName)'
-      SlotName: Staging
+      SlotName: staging
       Package: '$(Pipeline.Workspace)/WebApp/MyShop.ProductManagement.Api.zip'
       ScriptType: 'Inline Script'
       enableXmlVariableSubstitution: true
@@ -16,7 +16,7 @@ steps:
     inputs:
       azureSubscription: '$(azureSubscription)' 
       action: 'Start Azure App Service'
-      webAppName: '$(apiName)'
+      webAppName: 'app-$(apiName)-$(environmentName)'
       specifySlotOrASE: true
       resourceGroupName: '$(rgName)'
       slot: staging
@@ -25,7 +25,7 @@ steps:
     displayName: 'Swap to Production'    
     inputs:
       azureSubscription: '$(azureSubscription)'
-      webAppName: '$(apiName)'
+      webAppName: 'app-$(apiName)-$(environmentName)'
       resourceGroupName: '$(rgName)'
       sourceSlot: staging
 
@@ -34,7 +34,7 @@ steps:
     inputs:
       azureSubscription: '$(azureSubscription)'
       action: 'Stop Azure App Service'
-      webAppName: '$(apiName)'
+      webAppName: 'app-$(apiName)-$(environmentName)'
       specifySlotOrASE: true
       resourceGroupName: '$(rgName)'
       slot: staging
