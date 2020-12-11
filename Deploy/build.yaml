@@ -3,12 +3,14 @@ steps:
   - task: UseDotNet@2
     inputs:
       version: '5.0.x'
+      performMultiLevelLookup: true
       includePreviewVersions: true # Required for preview versions
 
   - task: DotNetCoreCLI@2
-    displayName: "Dotnet Build"
+    displayName: 'Build $(buildConfiguration)'
     inputs:
       command: "build"
+      arguments: '--configuration $(buildConfiguration)'
       projects: '**/*.csproj'
 
   - task: DotNetCoreCLI@2
@@ -23,7 +25,7 @@ steps:
     inputs:
       command: "publish"
       publishWebProjects: true
-      arguments: "--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
+      arguments: "--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)"
       zipAfterPublish: True
 
   - task: PublishBuildArtifacts@1
