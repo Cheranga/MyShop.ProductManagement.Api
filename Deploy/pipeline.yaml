@@ -35,8 +35,8 @@ stages:
     - template: 'build.yaml'
       parameters:        
         projectFiles: '**/*.csproj'
-        buildPlatform: ${{variables.platform}}
-        buildConfiguration: ${{variables.platformConfiguration}}
+        buildPlatform: $(platform)
+        buildConfiguration: $(platformConfiguration)
 
 - stage: DEV
   dependsOn: ['Build']
