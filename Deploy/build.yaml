@@ -7,10 +7,10 @@ steps:
       includePreviewVersions: true # Required for preview versions
 
   - task: DotNetCoreCLI@2
-    displayName: 'Build $(buildConfiguration)'
+    displayName: 'Build $(BuildConfiguration)'
     inputs:
       command: "build"
-      arguments: '--configuration $(buildConfiguration)'
+      arguments: '--configuration $(BuildConfiguration)'
       projects: '**/*.csproj'
 
   - task: DotNetCoreCLI@2
@@ -25,7 +25,7 @@ steps:
     inputs:
       command: "publish"
       publishWebProjects: true
-      arguments: "--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)"
+      arguments: "--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)"
       zipAfterPublish: True
 
   - task: PublishBuildArtifacts@1
