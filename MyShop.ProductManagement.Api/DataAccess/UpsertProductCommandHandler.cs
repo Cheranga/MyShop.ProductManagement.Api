@@ -10,15 +10,15 @@ using MyShop.ProductManagement.Api.Core;
 
 namespace MyShop.ProductManagement.Api.DataAccess
 {
-    public class UpsertProductCommandHandler : IRequestHandler<UpsertProductCommand, Result>
+    public class UpsertProductCommandHandler : IRequestHandler<UpsertProductCommand, Result<int>>
     {
-        private const string InsertCommand = "insert into Products (ProductCode, ProductDescription) " +
-                                             "output inserted.Id, inserted.ProductCode, inserted.ProductDescription " +
-                                             "values (@ProductCode, @ProductDescription)";
+        private const string InsertCommand = "insert into Products (ProductCode, ProductName) " +
+                                             "output inserted.Id, inserted.ProductCode, inserted.ProductName " +
+                                             "values (@ProductCode, @ProductName)";
 
 
-        private const string UpdateCommand = "update Products set ProductCode=@ProductCode, ProductDescription=@ProductDescription " +
-                                             "output inserted.Id, inserted.ProductCode, inserted.ProductDescription " +
+        private const string UpdateCommand = "update Products set ProductCode=@ProductCode, ProductName=@ProductName " +
+                                             "output inserted.Id, inserted.ProductCode, inserted.ProductName " +
                                              "where id=@Id";
 
         private readonly string _connectionString;
@@ -35,7 +35,7 @@ namespace MyShop.ProductManagement.Api.DataAccess
             _logger = logger;
         }
 
-        public async Task<Result> Handle(UpsertProductCommand request, CancellationToken cancellationToken)
+        public async Task<Result<int>> Handle(UpsertProductCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -48,10 +48,10 @@ namespace MyShop.ProductManagement.Api.DataAccess
                     if (upsertedProduct == null)
                     {
                         _logger.LogError("Error when upserting product {command}", request);
-                        return Result.Failure("", "Error occured when upserting product.");
+                        return Result<int>.Failure("", "Error occured when upserting product.");
                     }
 
-                    return Result.Success();
+                    return Result<int>.Success(upsertedProduct.Id);
                 }
             }
             catch (Exception exception)
@@ -59,7 +59,7 @@ namespace MyShop.ProductManagement.Api.DataAccess
                 _logger.LogError(exception, "Error occured when upserting product {command}", request);
             }
 
-            return Result.Failure("", "Error occured when upserting product.");
+            return Result<int>.Failure("", "Error occured when upserting product.");
         }
     }
 }

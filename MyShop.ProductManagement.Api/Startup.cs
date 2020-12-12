@@ -13,6 +13,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Options;
+using MyShop.ProductManagement.Api.Configs;
+using MyShop.ProductManagement.Api.DataAccess;
+using MyShop.ProductManagement.Api.Services;
 
 namespace MyShop.ProductManagement.Api
 {
@@ -44,6 +48,15 @@ namespace MyShop.ProductManagement.Api
                 options.ReportApiVersions = true;
                 options.AssumeDefaultVersionWhenUnspecified = true;
                 options.DefaultApiVersion = new ApiVersion(1, 0);
+            });
+
+            services.AddScoped<IProductsService, ProductsService>();
+            services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
+            services.Configure<DatabaseConfig>(Configuration.GetSection("DatabaseConfig"));
+            services.AddSingleton(provider =>
+            {
+                var config = provider.GetRequiredService<IOptions<DatabaseConfig>>().Value;
+                return config;
             });
 
             services.AddValidatorsFromAssembly(typeof(Startup).Assembly);

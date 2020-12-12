@@ -20,6 +20,14 @@ namespace MyShop.ProductManagement.Api.Core
             };
         }
 
+        public static Result Failure(ValidationResult validationResult)
+        {
+            return new Result
+            {
+                Validation = validationResult
+            };
+        }
+
         public static Result Failure(string field, string failure)
         {
             return Failure(new ValidationFailure(field, failure));
@@ -45,6 +53,14 @@ namespace MyShop.ProductManagement.Api.Core
             return new Result<T>
             {
                 Validation = new ValidationResult(failures)
+            };
+        }
+
+        public static Result<T> Failure(ValidationResult validationResult)
+        {
+            return new Result<T>
+            {
+                Validation = validationResult
             };
         }
 
