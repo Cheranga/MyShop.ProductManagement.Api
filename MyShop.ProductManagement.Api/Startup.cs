@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
+using MediatR;
 
 namespace MyShop.ProductManagement.Api
 {
@@ -43,6 +45,9 @@ namespace MyShop.ProductManagement.Api
                 options.AssumeDefaultVersionWhenUnspecified = true;
                 options.DefaultApiVersion = new ApiVersion(1, 0);
             });
+
+            services.AddValidatorsFromAssembly(typeof(Startup).Assembly);
+            services.AddMediatR(typeof(Startup).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
