@@ -21,4 +21,4 @@ variables:
 - name: databaseName
   value: "sqldb-$(apiName)-$(environmentName)"  
 - name: adminUserName
-  value: sa
+  value: "admin-$(apiName)-$(environmentName)"
