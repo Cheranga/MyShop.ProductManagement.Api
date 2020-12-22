@@ -1,0 +1,92 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyVaultName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the key vault."
+            }
+        },
+        "keyVaultLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The location where the key vault will be created."
+            }
+        },        
+        "apiName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the function app which will use the key vault to store sensitive data."
+            }
+        },        
+        "sqlServerConnectionString": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The SQL server connection string to access the databases."
+            }
+        }
+    },    
+    "resources": [
+        {
+            "name": "[parameters('keyVaultName')]",
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2016-10-01",
+            "location": "[parameters('keyVaultLocation')]",
+            "tags": {
+                "displayName": "[parameters('keyVaultName')]"
+            },
+            "properties": {
+                "enabledForDeployment": true,
+                "enabledForTemplateDeployment": true,
+                "enabledForDiskEncryption": true,
+                "tenantId": "[subscription().tenantId]",
+                "accessPolicies": [
+                    {
+                        "tenantId": "[reference(concat('Microsoft.Web/sites/',  parameters('apiName'), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').tenantId]",
+                        "objectId": "[reference(concat('Microsoft.Web/sites/',  parameters('apiName'), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]",
+                        "permissions": {
+                            "keys": [
+                                "Get"
+                            ],
+                            "secrets": [
+                                "List",
+                                "Get"
+                            ]
+                        }
+                    },
+                    {
+                        "tenantId": "[reference(concat(resourceId('Microsoft.Web/sites/slots', parameters('apiName'), 'Staging'), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').tenantId]",
+                        "objectId": "[reference(concat(resourceId('Microsoft.Web/sites/slots', parameters('apiName'), 'Staging'), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]",
+                        "permissions": {
+                            "keys": [
+                                "Get"
+                            ],
+                            "secrets": [
+                                "List",
+                                "Get"
+                            ]
+                        }
+                    }
+                ],
+                "sku": {
+                    "name": "standard",
+                    "family": "A"
+                }
+            },
+            "resources": [
+                {
+                    "type": "secrets",
+                    "name": "DatabaseConfig--ConnectionString",
+                    "apiVersion": "2016-10-01",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
+                    ],
+                    "properties": {
+                        "value": "[parameters('sqlServerConnectionString')]"
+                    }
+                }
+            ]
+        }
+    ]
+}
