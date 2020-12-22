@@ -33,7 +33,7 @@
       }
     },
     "allowedIpAddresses": {
-      "type": "string",
+      "type": "array",
       "metadata": {
         "description": "The allowed IP addresses."
       }
@@ -63,21 +63,25 @@
           "dependsOn": [
             "[resourceId('Microsoft.Sql/servers', concat(parameters('serverName')))]"
           ]
-        },
-        {
-          "name": "AllowedIPs",
-          "type": "firewallrules",
-          "apiVersion": "2020-02-02-preview",
-          "location": "[parameters('serverLocation')]",
-          "properties": {
-            "endIpAddress": "[parameters('allowedIpAddresses')]",
-            "startIpAddress": "[parameters('allowedIpAddresses')]"
-          },
-          "dependsOn": [
-            "[parameters('serverName')]"
-          ]
         }
       ]
+    },
+    {
+      "type": "Microsoft.Sql/servers/firewallRules",
+      "name": "[concat(parameters('allowedIpAddresses')[copyIndex()], 'AllowedIpAddress')]",
+      "location": "[parameters('serverLocation')]",
+      "apiVersion": "2015–05–01-preview",
+      "copy": {
+        "name": "copyLoop",
+        "count": "[length(parameters('allowedIpAddresses'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+      ],
+      "properties": {
+        "startIpAddress": "[parameters('allowedIpAddresses')[copyIndex()]]",
+        "endIpAddress": "[parameters('allowedIpAddresses')[copyIndex()]]"
+      }
     }
   ]
 }

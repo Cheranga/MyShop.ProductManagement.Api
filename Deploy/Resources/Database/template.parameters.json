@@ -18,7 +18,7 @@
             "value": "TBD"
         },
         "allowedIpAddresses":{
-            "value": "TBD"
+            "value": ["TBD"]
         }
     }
 }
