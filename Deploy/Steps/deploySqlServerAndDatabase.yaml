@@ -16,4 +16,5 @@ steps:
         -databaseName "$(databaseName)" 
         -adminUserName "$(adminUserName)" 
         -adminPassword "$(adminPassword)" 
+        -allowedIpAddresses "$(allowedIpAddresses)" 
       
