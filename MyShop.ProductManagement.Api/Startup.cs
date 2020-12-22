@@ -53,9 +53,9 @@ namespace MyShop.ProductManagement.Api
             services.AddScoped<IProductsService, ProductsService>();
             services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
             services.Configure<DatabaseConfig>(Configuration.GetSection("DatabaseConfig"));
-            services.AddSingleton(provider =>
+            services.AddScoped(provider =>
             {
-                var config = provider.GetRequiredService<IOptions<DatabaseConfig>>().Value;
+                var config = provider.GetRequiredService<IOptionsSnapshot<DatabaseConfig>>().Value;
                 return config;
             });
 
