@@ -65,12 +65,12 @@
           ]
         }
       ]
-    },
+    },    
     {
       "type": "Microsoft.Sql/servers/firewallRules",
-      "name": "[concat(parameters('allowedIpAddresses')[copyIndex()], 'AllowedIpAddress')]",
+      "name": "[concat(parameters('serverName'), '/', parameters('allowedIpAddresses')[copyIndex()])]",
       "location": "[parameters('serverLocation')]",
-      "apiVersion": "2015–05–01-preview",
+      "apiVersion": "2020-02-02-preview",
       "copy": {
         "name": "copyLoop",
         "count": "[length(parameters('allowedIpAddresses'))]"
