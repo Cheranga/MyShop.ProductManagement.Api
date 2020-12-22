@@ -4,3 +4,4 @@ steps:
 - template: 'Steps/deployAppServicePlan.yaml'
 - template: 'Steps/deployWebApi.yaml'
 - template: 'Steps/deployCode.yaml'
+- template: 'Steps/deploySqlServerAndDatabase.yaml'
