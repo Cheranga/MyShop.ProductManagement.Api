@@ -33,7 +33,7 @@
       }
     },
     "allowedIpAddresses": {
-      "type":"string",
+      "type": "string",
       "metadata": {
         "description": "The allowed IP addresses."
       }
@@ -60,23 +60,21 @@
             "name": "Standard",
             "tier": "Standard"
           },
-          "resources": [
-            {
-              "name": "AllowedIPs",
-              "type": "firewallrules",
-              "apiVersion": "2020-02-02-preview",
-              "location": "[parameters('serverLocation')]",
-              "properties": {
-                "endIpAddress": "[parameters('allowedIpAddresses')]",
-                "startIpAddress": "[parameters('allowedIpAddresses')]"
-              },
-              "dependsOn": [
-                "[parameters('serverName')]"
-              ]
-            }
-          ],
           "dependsOn": [
             "[resourceId('Microsoft.Sql/servers', concat(parameters('serverName')))]"
+          ]
+        },
+        {
+          "name": "AllowedIPs",
+          "type": "firewallrules",
+          "apiVersion": "2020-02-02-preview",
+          "location": "[parameters('serverLocation')]",
+          "properties": {
+            "endIpAddress": "[parameters('allowedIpAddresses')]",
+            "startIpAddress": "[parameters('allowedIpAddresses')]"
+          },
+          "dependsOn": [
+            "[parameters('serverName')]"
           ]
         }
       ]
