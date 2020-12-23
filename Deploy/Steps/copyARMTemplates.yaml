@@ -1,0 +1,11 @@
+steps:
+- task: AzureCLI@2
+  displayName: 'Copy ARM templates to the storage account'
+  inputs:
+    azureSubscription: '$(azureSubscription)' 
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az --version
+      az account show      
+      
