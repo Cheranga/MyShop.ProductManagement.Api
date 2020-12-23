@@ -1,7 +1,7 @@
 variables:
 - group: ProductsApiDev
 - name: apiName
-  value: produtsapi  
+  value: productsapi  
 - name: environmentName
   value: dev    
 - name: rgName
