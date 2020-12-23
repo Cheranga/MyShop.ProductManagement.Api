@@ -8,4 +8,6 @@ steps:
     inlineScript: |
       az storage account create -n "$(tempStorageName)" -g "$(rgName)" -l "$(rgLocation)" 
       az storage container create -n "$(tempContainerName)" --account-name "$(tempStorageName)" --auth-mode login 
+      $accountKey = (az storage account keys list -g "$(rgName)" -n "$(tempStorageName)" | ConvertFrom-Json)[0].value
+      az storage blob upload-batch --source "$(Pipeline.Workspace)/deploy/" --pattern *.json --destination "$(tempContainerName)" --account-name $(tempStorageName) --account-key $accountKey
 
