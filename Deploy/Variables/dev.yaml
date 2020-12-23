@@ -24,3 +24,5 @@ variables:
   value: "admin-$(apiName)-$(environmentName)"
 - name: tempStorageName
   value: "sg$(apiName)$(environmentName)temp"
+- name: tempContainerName
+  value: "armtemplates"  
