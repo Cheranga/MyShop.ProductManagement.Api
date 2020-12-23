@@ -22,3 +22,5 @@ variables:
   value: "sqldb-$(apiName)-$(environmentName)"  
 - name: adminUserName
   value: "admin-$(apiName)-$(environmentName)"
+- name: tempStorageName
+  value: "sg$(apiName)$(environmentName)temp"

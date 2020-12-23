@@ -6,6 +6,6 @@ steps:
     scriptType: 'pscore'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      az --version
-      az account show      
-      
+      az storage account create -n "$(tempStorageName)" -g "$(rgName)" -l "$(rgLocation)" 
+      az storage container create -n "ARM" --account-name "$(tempStorageName)" --auth-mode login 
+
