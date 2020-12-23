@@ -37,6 +37,7 @@
                 "displayName": "[parameters('keyVaultName')]"
             },
             "properties": {
+                "enableSoftDelete": true,
                 "enabledForDeployment": true,
                 "enabledForTemplateDeployment": true,
                 "enabledForDiskEncryption": true,

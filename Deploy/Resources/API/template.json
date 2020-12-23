@@ -35,7 +35,8 @@
             "location": "[parameters('apiLocation')]",
             "properties": {
                 "name": "[parameters('apiName')]",
-                "serverFarmId": "[concat('/subscriptions/', variables('subscriptionId'), '/resourcegroups/', parameters('rgName'), '/providers/Microsoft.Web/serverfarms/', parameters('planName'))]",
+                // "serverFarmId": "[concat('/subscriptions/', variables('subscriptionId'), '/resourcegroups/', parameters('rgName'), '/providers/Microsoft.Web/serverfarms/', parameters('planName'))]",
+                "serverFarmId":"[resourceId('Microsoft.Web/serverfarms', parameters('planName'))]",
                 "hostingEnvironment": null,
                 "hostNameSslStates": [
                     {
