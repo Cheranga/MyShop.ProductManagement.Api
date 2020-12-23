@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyShop.ProductManagement.Api.Requests;
 using MyShop.ProductManagement.Api.Responses;
+using MyShop.ProductManagement.Api.Services;
 
 namespace MyShop.ProductManagement.Api.Controllers.V1
 {
@@ -15,15 +18,39 @@ namespace MyShop.ProductManagement.Api.Controllers.V1
     [Produces(MediaTypeNames.Application.Json)]
     public class ProductsController : ControllerBase
     {
+        private readonly IProductsService _productService;
+        private readonly IValidator<UpsertProductRequest> _upsertProductRequestValidator;
+
+        public ProductsController(IProductsService productService, IValidator<UpsertProductRequest> upsertProductRequestValidator)
+        {
+            _productService = productService;
+            _upsertProductRequestValidator = upsertProductRequestValidator;
+        }
+
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> PostProduct([FromBody]CreateProductRequest createProductRequest)
+        public async Task<IActionResult> PostProduct([FromBody]UpsertProductRequest createProductRequest)
         {
-            await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
+            var validationResult = await _upsertProductRequestValidator.ValidateAsync(createProductRequest);
+            if (!validationResult.IsValid)
+            {
+                //
+                // TODO: Do the validation result transformations.
+                //
+                return BadRequest(validationResult);
+            }
 
-            return CreatedAtAction(nameof(GetProductById), new { productId = createProductRequest.ProductId }, createProductRequest.ProductId);
+            var operation = await _productService.UpsertProductAsync(createProductRequest);
+
+            if (operation.Status)
+            {
+                return CreatedAtAction(nameof(GetProductById), new { productId = operation.Data }, null);
+            }
+
+            return StatusCode((int) (HttpStatusCode.InternalServerError));
+
         }
 
         [HttpGet("{productId}")]

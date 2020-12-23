@@ -1,6 +1,7 @@
 variables:
+- group: ProductsApiDev
 - name: apiName
-  value: produtsapi  
+  value: productsapi  
 - name: environmentName
   value: dev    
 - name: rgName
@@ -15,3 +16,9 @@ variables:
   value: Development
 - name: webSiteTimeZone
   value: AUS Eastern Standard Time  
+- name: serverName
+  value: "sql-$(apiName)-$(environmentName)"
+- name: databaseName
+  value: "sqldb-$(apiName)-$(environmentName)"  
+- name: adminUserName
+  value: "admin-$(apiName)-$(environmentName)"

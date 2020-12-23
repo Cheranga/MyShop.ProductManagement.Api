@@ -1,8 +1,8 @@
 ﻿namespace MyShop.ProductManagement.Api.Requests
 {
-    public class CreateProductRequest
+    public class UpsertProductRequest
     {
-        public string ProductId { get; set; }
+        public int ProductId { get; set; }
         public string ProductCode { get; set; }
         public string ProductName { get; set; }
     }

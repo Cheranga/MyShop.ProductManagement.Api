@@ -1,0 +1,87 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serverName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the SQL logical server."
+      }
+    },
+    "databaseName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the SQL Database."
+      }
+    },
+    "serverLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    "adminUserName": {
+      "type": "string",
+      "metadata": {
+        "description": "The administrator username of the SQL logical server."
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The administrator password of the SQL logical server."
+      }
+    },
+    "allowedIpAddresses": {
+      "type": "array",
+      "metadata": {
+        "description": "The allowed IP addresses."
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Sql/servers",
+      "apiVersion": "2020-02-02-preview",
+      "name": "[parameters('serverName')]",
+      "location": "[parameters('serverLocation')]",
+      "properties": {
+        "administratorLogin": "[parameters('adminUserName')]",
+        "administratorLoginPassword": "[parameters('adminPassword')]"
+      },
+      "resources": [
+        {
+          "type": "databases",
+          "apiVersion": "2020-08-01-preview",
+          "name": "[parameters('databaseName')]",
+          "location": "[parameters('serverLocation')]",
+          "sku": {
+            "name": "Standard",
+            "tier": "Standard"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', concat(parameters('serverName')))]"
+          ]
+        }
+      ]
+    },    
+    {
+      "type": "Microsoft.Sql/servers/firewallRules",
+      "name": "[concat(parameters('serverName'), '/', parameters('allowedIpAddresses')[copyIndex()])]",
+      "location": "[parameters('serverLocation')]",
+      "apiVersion": "2020-02-02-preview",
+      "copy": {
+        "name": "copyLoop",
+        "count": "[length(parameters('allowedIpAddresses'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+      ],
+      "properties": {
+        "startIpAddress": "[parameters('allowedIpAddresses')[copyIndex()]]",
+        "endIpAddress": "[parameters('allowedIpAddresses')[copyIndex()]]"
+      }
+    }
+  ]
+}
