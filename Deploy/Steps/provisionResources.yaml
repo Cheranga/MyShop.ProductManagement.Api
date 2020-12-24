@@ -13,7 +13,7 @@ steps:
 
         $expireTime = $(date -u -d '30 minutes' +%Y-%m-%dT%H:%MZ)
         $connection = az storage account show-connection-string -g "$(sharedRgName)" --name "$(tempStorageName)" --query connectionString      
-        $token = az storage container generate-sas --name $(tempContainerName) --expiry $(expireTime) --permissions r --output tsv --connection-string $connection
+        $token = az storage container generate-sas --name $(tempContainerName) --expiry $expireTime --permissions r --output tsv --connection-string $connection
 
         az group deployment create -g "$(rgName)" --template-file "$(Pipeline.Workspace)/deploy/main.json" --output jsonc --parameters \
         storageName=$(tempStorageName) \
