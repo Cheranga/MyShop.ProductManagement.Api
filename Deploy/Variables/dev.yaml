@@ -8,6 +8,10 @@ variables:
   value: "rg-$(apiName)-$(environmentName)"
 - name: rgLocation
   value: Australia Southeast  
+- name: sharedRgName
+  value: rg-shared-$(environmentName)
+- name: sharedRgLocation
+  value: Australia Southeast  
 - name: planSku
   value: "S1"
 - name: planCapacity

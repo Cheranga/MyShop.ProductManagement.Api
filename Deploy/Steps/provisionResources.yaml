@@ -1,18 +1,18 @@
 steps:
   - task: AzureCLI@2
-    displayName: "Copy ARM templates to the storage account"
+    displayName: "Provisioning resources"
     inputs:
       azureSubscription: "$(azureSubscription)"
       scriptType: "pscore"
       scriptLocation: "inlineScript"
       inlineScript: |
-        az storage account create -n "$(tempStorageName)" -g "$(rgName)" -l "$(rgLocation)" 
+        az storage account create -n "$(tempStorageName)" -g "$(sharedRgName)" -l "$(sharedRgLocation)" 
         az storage container create -n "$(tempContainerName)" --account-name "$(tempStorageName)" --auth-mode login 
-        $accountKey = (az storage account keys list -g "$(rgName)" -n "$(tempStorageName)" | ConvertFrom-Json)[0].value
+        $accountKey = (az storage account keys list -g "$(sharedRgName)" -n "$(tempStorageName)" | ConvertFrom-Json)[0].value
         az storage blob upload-batch --source "$(Pipeline.Workspace)/deploy/" --pattern *.json --destination "$(tempContainerName)" --account-name $(tempStorageName) --account-key $accountKey
 
         $expireTime = $(date -u -d '30 minutes' +%Y-%m-%dT%H:%MZ)
-        $connection = az storage account show-connection-string -g "$(rgName)" --name "$(tempStorageName)" --query connectionString      
+        $connection = az storage account show-connection-string -g "$(sharedRgName)" --name "$(tempStorageName)" --query connectionString      
         $token = az storage container generate-sas --name $(tempContainerName) --expiry $(expireTime) --permissions r --output tsv --connection-string $connection
 
         az group deployment create -g "$(rgName)" --template-file "$(Pipeline.Workspace)/deploy/main.json" --output jsonc --parameters \
@@ -20,5 +20,9 @@ steps:
         storageContainer=$(tempContainerName) \
         templateSas=$token \
         rgName=$(rgName) \
-        rgLocation=$(rgLocation) 
+        rgLocation=$(rgLocation) \
+        planName="plan-$(apiName)-$(environmentName)" \
+        planSku=$(planSku) \
+        planCapacity=$(planCapacity) 
+
 

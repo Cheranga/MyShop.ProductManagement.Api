@@ -2,6 +2,27 @@
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.1",
     "parameters": {
+        "planName": {
+            "type": "string",
+            "defaultValue":"TBD",
+            "metadata": {
+                "description": "The name of the app service plan"
+            }
+        },
+        "planSku": {
+            "type": "string",
+            "defaultValue":"TBD",
+            "metadata": {
+                "description": "The SKU of the app service plan"
+            }
+        },
+        "planCapacity": {
+            "type": "string",
+            "defaultValue":"TBD",
+            "metadata": {
+                "description": "The capacity of the app service plan"
+            }
+        },        
         "storageName": {
             "type": "string",
             "defaultValue":"TBD",
@@ -50,14 +71,20 @@
                 "mode": "Incremental",
                 "templateLink": {
                     // "uri": "[concat('artifactsLocation', '/linkedTemplates/linkedTemplate.json', 'artifactsLocationSasToken')]",
-                    "uri": "[concat(concat(variables('templateUri'),'ResourceGroup/template.json'),'?', parameters('templateSas'))]",
+                    "uri": "[concat(concat(variables('templateUri'),'AppServicePlan/template.json'),'?', parameters('templateSas'))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "rgName": {
-                        "value": "[parameters('rgName')]"
+                    "planName": {
+                        "value": "[parameters('planName')]"
                     },
-                    "rgLocation": {
+                    "sku": {
+                        "value": "[parameters('planSku')]"
+                    },
+                    "capacity": {
+                        "value": "[parameters('planCapacity')]"
+                    },
+                    "planLocation": {
                         "value": "[parameters('rgLocation')]"
                     }
                 }

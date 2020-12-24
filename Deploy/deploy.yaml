@@ -1,7 +1,7 @@
 steps:
 
-- template: 'Steps/copyARMTemplates.yaml'
-# - template: 'Steps/deployResourceGroup.yaml'
+- template: 'Steps/deployResourceGroup.yaml'
+- template: 'Steps/provisionResources.yaml'
 # - template: 'Steps/deployAppServicePlan.yaml'
 # - template: 'Steps/deploySqlServerAndDatabase.yaml'
 # - template: 'Steps/deployWebApi.yaml'
