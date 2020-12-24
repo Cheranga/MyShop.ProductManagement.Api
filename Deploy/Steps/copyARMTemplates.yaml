@@ -13,5 +13,6 @@ steps:
 
       $expireTime = $(date -u -d '30 minutes' +%Y-%m-%dT%H:%MZ)
       $connection = az storage account show-connection-string -g "$(rgName)" --name "$(tempStorageName)" --query connectionString
+      echo $connection
       # $connection = $(az storage container generate-sas -- name $(tempContainerName) -- expiry$(expireTime) --permissions r --output tsv --connection-string)
 
