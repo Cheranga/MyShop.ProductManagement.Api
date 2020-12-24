@@ -18,14 +18,14 @@ steps:
         echo $token
         echo $connection
         
-        az group deployment create -g "$(rgName)" --template-file "$(Pipeline.Workspace)/deploy/main.json" --output jsonc --parameters \
-        storageName="$(tempStorageName)" \
-        storageContainer="$(tempContainerName)" \
-        templateSas=$token \
-        rgName="$(rgName)" \
-        rgLocation="$(rgLocation)" \
-        planName="plan-$(apiName)-$(environmentName)" \
-        planSku="$(planSku)" \
-        planCapacity="$(planCapacity)" 
+        az group deployment create -g "$(rgName)" --template-file "$(Pipeline.Workspace)/deploy/main.json" --output jsonc \
+        --parameters storageName="$(tempStorageName)" \
+        --parameters storageContainer="$(tempContainerName)" \
+        --parameters templateSas=$token \
+        --parameters rgName="$(rgName)" \
+        --parameters rgLocation="$(rgLocation)" \
+        --parameters planName="plan-$(apiName)-$(environmentName)" \
+        --parameters planSku="$(planSku)" \
+        --parameters planCapacity="$(planCapacity)" 
 
 
