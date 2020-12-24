@@ -11,3 +11,7 @@ steps:
       $accountKey = (az storage account keys list -g "$(rgName)" -n "$(tempStorageName)" | ConvertFrom-Json)[0].value
       az storage blob upload-batch --source "$(Pipeline.Workspace)/deploy/" --pattern *.json --destination "$(tempContainerName)" --account-name $(tempStorageName) --account-key $accountKey
 
+      $expireTime = $(date -u -d '30 minutes' +%Y-%m-%dT%H:%MZ)
+      $connection = az storage account show-connection-string -g "$(rgName)" --name "$(tempStorageName)" --query connectionString
+      # $connection = $(az storage container generate-sas -- name $(tempContainerName) -- expiry$(expireTime) --permissions r --output tsv --connection-string)
+
