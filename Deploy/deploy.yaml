@@ -1,9 +1,9 @@
 steps:
 
 - template: 'Steps/copyARMTemplates.yaml'
-- template: 'Steps/deployResourceGroup.yaml'
-- template: 'Steps/deployAppServicePlan.yaml'
-- template: 'Steps/deploySqlServerAndDatabase.yaml'
-- template: 'Steps/deployWebApi.yaml'
-- template: 'Steps/deployKeyVault.yaml'
-- template: 'Steps/deployCode.yaml'
+# - template: 'Steps/deployResourceGroup.yaml'
+# - template: 'Steps/deployAppServicePlan.yaml'
+# - template: 'Steps/deploySqlServerAndDatabase.yaml'
+# - template: 'Steps/deployWebApi.yaml'
+# - template: 'Steps/deployKeyVault.yaml'
+# - template: 'Steps/deployCode.yaml'
