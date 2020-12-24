@@ -15,14 +15,17 @@ steps:
         $connection = az storage account show-connection-string -g "$(sharedRgName)" --name "$(tempStorageName)" --query connectionString      
         $token = az storage container generate-sas --name $(tempContainerName) --expiry $expireTime --permissions r --output tsv --connection-string $connection
 
+        echo $token
+        echo $connection
+        
         az group deployment create -g "$(rgName)" --template-file "$(Pipeline.Workspace)/deploy/main.json" --output jsonc --parameters \
-        storageName=$(tempStorageName) \
-        storageContainer=$(tempContainerName) \
+        storageName="$(tempStorageName)" \
+        storageContainer="$(tempContainerName)" \
         templateSas=$token \
-        rgName=$(rgName) \
-        rgLocation=$(rgLocation) \
+        rgName="$(rgName)" \
+        rgLocation="$(rgLocation)" \
         planName="plan-$(apiName)-$(environmentName)" \
-        planSku=$(planSku) \
-        planCapacity=$(planCapacity) 
+        planSku="$(planSku)" \
+        planCapacity="$(planCapacity)" 
 
 
