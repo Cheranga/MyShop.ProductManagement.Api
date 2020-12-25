@@ -70,7 +70,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {                    
-                    "uri": "[concat(uri(variables('templateUri'),'AppServicePlan/template.json'),'?', parameters('templateSas'))]",
+                    "uri": "[uri(variables('templateUri'),concat('AppServicePlan/template.json','?',parameters('templateSas')))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
