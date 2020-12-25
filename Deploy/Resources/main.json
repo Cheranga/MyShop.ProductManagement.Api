@@ -69,8 +69,8 @@
             "apiVersion": "2019-10-01",
             "properties": {
                 "mode": "Incremental",
-                "templateLink": {                    
-                    "uri": "[uri(variables('templateUri'),concat('AppServicePlan/template.json','?',parameters('templateSas')))]",
+                "templateLink": {                                        
+                    "uri":"[concat('https://', parameters('storageName'),'.blob.core.windows.net/armtemplates/AppServicePlan/template.json','?', parameters('templateSas'))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
