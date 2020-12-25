@@ -1,6 +1,6 @@
 steps:
   - task: AzureCLI@2
-    displayName: "Provisioning resources"
+    displayName: "Upload ARM templates and generate SAS token"
     inputs:
       azureSubscription: "$(azureSubscription)"
       scriptType: "pscore"
@@ -17,7 +17,30 @@ steps:
         
         echo $token
         echo $connection
+
+        Write-Host "##vso[task.setvariable variable=storageSasToken]$token"
+
+
+  - task: AzureResourceManagerTemplateDeployment@3    
+    displayName: 'Create app service plan'
+    inputs:
+      deploymentScope: 'Resource Group' 
+      azureResourceManagerConnection: '$(azureSubscription)' 
+      location: '$(rgLocation)' 
+      action: 'Create Or Update Resource Group' 
+      resourceGroupName: '$(rgName)'
+      deploymentMode: 'Incremental' 
+      csmFile: '$(Pipeline.Workspace)/deploy/main.json'       
+      overrideParameters: |
+        -rgName "$(rgName)" 
+        -rgLocation "$(rgLocation)" 
+        -planName "plan-$(apiName)-$(environmentName)" 
+        -planSku "$(planSku)" 
+        -planCapacity "$(planCapacity)" 
+        -storageName "$(tempStorageName)" 
+        -storageContainer "$(tempContainerName)" 
+        -templateSas "$(storageSasToken)" 
         
-        az group deployment create -g "$(rgName)" --template-file "$(Pipeline.Workspace)/deploy/main.json" --query "properties.outputs" --output jsonc --parameters storageName="$(tempStorageName)" storageContainer="$(tempContainerName)" templateSas=$token rgName="$(rgName)" rgLocation="$(rgLocation)" planName="plan-$(apiName)-$(environmentName)" planSku="$(planSku)" planCapacity="$(planCapacity)" 
+        
 
 
