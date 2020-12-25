@@ -238,7 +238,7 @@
                         "value": "[parameters('rgLocation')]"
                     },
                     "apiName": {
-                        "value": "[parameters('rgName')]"
+                        "value": "[parameters('apiName')]"
                     },
                     "sqlServerConnectionString": {
                         "value": "[reference(variables('dbDeployment')).outputs.connectionString.value]"
