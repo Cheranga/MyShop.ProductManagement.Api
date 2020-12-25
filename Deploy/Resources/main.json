@@ -70,7 +70,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat('https://', parameters('storageName'),'.blob.core.windows.net/armtemplates/AppServicePlan/template.json','?', parameters('templateSas'))]",
+                    "uri": "[concat('https://', parameters('storageName'),'.blob.core.windows.net/',parameters('storageContainer'),'/AppServicePlan/template.json','?', parameters('templateSas'))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
