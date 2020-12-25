@@ -46,6 +46,9 @@ steps:
         -adminUserName "$(adminUserName)" 
         -adminPassword "$(adminPassword)" 
         -allowedIpAddresses "$(allowedIpAddresses)" 
+        -apiName "app-$(apiName)-$(environmentName)" 
+        -apiLocation "$(rgLocation)" 
+        -aspNetCoreEnvironment "$(aspNetCoreEnvironment)" 
         
         
         

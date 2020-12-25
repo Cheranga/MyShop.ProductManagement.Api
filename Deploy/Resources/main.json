@@ -92,14 +92,31 @@
             "metadata": {
                 "description": "The whitelisted IP addresses"
             }
+        },
+        "apiName": {
+            "type": "string",
+            "defaultValue": "TBD",
+            "metadata": {
+                "description": "The name of the API."
+            }
+        },
+        "aspNetCoreEnvironment": {
+            "type": "string",
+            "defaultValue": "TBD",
+            "metadata": {
+                "description": "The environment name of the ASP.NET Core environment."
+            }
         }
     },
     "variables": {
-        "templateUri": "[concat('https://',parameters('storageName'),'.blob.core.windows.net/',parameters('storageContainer'))]"
+        "templateUri": "[concat('https://',parameters('storageName'),'.blob.core.windows.net/',parameters('storageContainer'))]",        
+        "aspDeployment": "[concat(parameters('planName'),'deployment')]",
+        "dbDeployment": "[concat(parameters('serverName'),'deployment')]",
+        "apiDeployment": "[concat(parameters('apiName'),'deployment')]"
     },
     "resources": [
         {
-            "name": "[concat(parameters('rgName'),'deployment')]",
+            "name": "[variables('aspDeployment')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "properties": {
@@ -125,7 +142,7 @@
             }
         },
         {
-            "name": "[concat(parameters('serverName'),'deployment')]",
+            "name": "[variables('dbDeployment')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "properties": {
@@ -155,6 +172,41 @@
                     }
                 }
             }
+        },
+        {
+            "name": "[variables('apiDeployment')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('templateUri'),'/API/template.json','?', parameters('templateSas'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "apiName": {
+                        "value": "[parameters('apiName')]"
+                    },
+                    "apiLocation": {
+                        "value": "[parameters('rgLocation')]"
+                    },
+                    "rgName": {
+                        "value": "[parameters('rgName')]"
+                    },
+                    "planName": {
+                        "value": "[parameters('planName')]"
+                    },
+                    "aspNetCoreEnvironment": {
+                        "value": "[parameters('aspNetCoreEnvironment')]"
+                    },
+                    "websiteTimeZone": {
+                        "value": "AUS Eastern Standard Time"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[variables('aspDeployment')]"
+            ]
         }
     ],
     "outputs": {}
