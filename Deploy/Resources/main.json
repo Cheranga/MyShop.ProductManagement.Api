@@ -4,56 +4,56 @@
     "parameters": {
         "planName": {
             "type": "string",
-            "defaultValue":"TBD",
+            "defaultValue": "TBD",
             "metadata": {
                 "description": "The name of the app service plan"
             }
         },
         "planSku": {
             "type": "string",
-            "defaultValue":"TBD",
+            "defaultValue": "TBD",
             "metadata": {
                 "description": "The SKU of the app service plan"
             }
         },
         "planCapacity": {
-            "type": "string",
-            "defaultValue":"TBD",
+            "type": "int",
+            "defaultValue": 1,
             "metadata": {
                 "description": "The capacity of the app service plan"
             }
-        },        
+        },
         "storageName": {
             "type": "string",
-            "defaultValue":"TBD",
+            "defaultValue": "TBD",
             "metadata": {
                 "description": "The name of the storage account"
             }
         },
         "storageContainer": {
             "type": "string",
-            "defaultValue":"TBD",
+            "defaultValue": "TBD",
             "metadata": {
                 "description": "The BLOB container in the storage account"
             }
         },
         "templateSas": {
             "type": "securestring",
-            "defaultValue":"TBD",
+            "defaultValue": "TBD",
             "metadata": {
                 "description": "The security token to access the ARM template in the storage account."
             }
         },
         "rgName": {
             "type": "string",
-            "defaultValue":"TBD",
+            "defaultValue": "TBD",
             "metadata": {
                 "description": "Name of the Resource Group to create"
             }
         },
         "rgLocation": {
             "type": "string",
-            "defaultValue":"TBD",
+            "defaultValue": "TBD",
             "metadata": {
                 "description": "Location for the Resource Group"
             }
@@ -69,8 +69,8 @@
             "apiVersion": "2019-10-01",
             "properties": {
                 "mode": "Incremental",
-                "templateLink": {                                        
-                    "uri":"[concat('https://', parameters('storageName'),'.blob.core.windows.net/armtemplates/AppServicePlan/template.json','?', parameters('templateSas'))]",
+                "templateLink": {
+                    "uri": "[concat('https://', parameters('storageName'),'.blob.core.windows.net/armtemplates/AppServicePlan/template.json','?', parameters('templateSas'))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
