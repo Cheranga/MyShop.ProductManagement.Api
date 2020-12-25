@@ -65,7 +65,7 @@
           ]
         }
       ]
-    },    
+    },
     {
       "type": "Microsoft.Sql/servers/firewallRules",
       "name": "[concat(parameters('serverName'), '/', parameters('allowedIpAddresses')[copyIndex()])]",
@@ -83,5 +83,11 @@
         "endIpAddress": "[parameters('allowedIpAddresses')[copyIndex()]]"
       }
     }
-  ]
+  ],
+  "outputs": {
+    "connectionString": {
+      "type": "securestring",
+      "value": "[concat('Server=tcp:',reference(parameters('serverName')).fullyQualifiedDomainName,',1433;Initial Catalog=',parameters('databaseName'),';Persist Security Info=False;User ID=',reference(parameters('serverName')).administratorLogin,';Password=',reference(parameters('serverName')).administratorLoginPassword,';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+    }
+  }
 }

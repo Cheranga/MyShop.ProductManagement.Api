@@ -46,8 +46,10 @@ steps:
         -adminUserName "$(adminUserName)" 
         -adminPassword "$(adminPassword)" 
         -allowedIpAddresses "$(allowedIpAddresses)" 
-        -apiName "app-$(apiName)-$(environmentName)"         
+        -apiName "app-$(apiName)-$(environmentName)" 
         -aspNetCoreEnvironment "$(aspNetCoreEnvironment)" 
+        -keyVaultName "kv-$(apiName)-$(environmentName)" 
+
         
         
         
