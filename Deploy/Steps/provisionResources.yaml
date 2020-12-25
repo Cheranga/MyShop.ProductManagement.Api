@@ -33,14 +33,21 @@ steps:
       deploymentMode: 'Incremental' 
       csmFile: '$(Pipeline.Workspace)/deploy/main.json'       
       overrideParameters: |
+        -storageName "$(tempStorageName)" 
+        -storageContainer "$(tempContainerName)" 
+        -templateSas "$(storageSasToken)" 
         -rgName "$(rgName)" 
         -rgLocation "$(rgLocation)" 
         -planName "plan-$(apiName)-$(environmentName)" 
         -planSku "$(planSku)" 
         -planCapacity "$(planCapacity)" 
-        -storageName "$(tempStorageName)" 
-        -storageContainer "$(tempContainerName)" 
-        -templateSas "$(storageSasToken)" 
+        -serverName "$(serverName)" 
+        -serverLocation "$(rgLocation)" 
+        -databaseName "$(databaseName)" 
+        -adminUserName "$(adminUserName)" 
+        -adminPassword "$(adminPassword)" 
+        -allowedIpAddresses "$(allowedIpAddresses)" 
+        
         
         
 

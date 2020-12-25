@@ -88,7 +88,7 @@
         },
         "allowedIpAddresses": {
             "type": "array",
-            "defaultValue": ["TBD"],
+            "defaultValue": [ "TBD" ],
             "metadata": {
                 "description": "The whitelisted IP addresses"
             }
@@ -154,7 +154,7 @@
                         "value": "[parameters('allowedIpAddresses')]"
                     }
                 }
-            }            
+            }
         }
     ],
     "outputs": {}
