@@ -2,6 +2,10 @@
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.1",
     "parameters": {
+        "buildNumber": {
+            "type":"string",
+            "defaultValue":"TBD"
+        },
         "planName": {
             "type": "string",
             "defaultValue": "TBD",
@@ -117,10 +121,10 @@
     },
     "variables": {
         "templateUri": "[concat('https://',parameters('storageName'),'.blob.core.windows.net/',parameters('storageContainer'))]",
-        "aspDeployment": "[concat(parameters('planName'),'deployment')]",
-        "dbDeployment": "[concat(parameters('serverName'),'deployment')]",
-        "apiDeployment": "[concat(parameters('apiName'),'deployment')]",
-        "akvDeployment": "[concat(parameters('keyVaultName'), 'deployment')]"
+        "aspDeployment": "[concat(parameters('planName'),'-',parameters('buildNumber'),'-deployment')]",
+        "dbDeployment": "[concat(parameters('serverName'),'-',parameters('buildNumber'),'-deployment')]",
+        "apiDeployment": "[concat(parameters('apiName'),'-',parameters('buildNumber'),'-deployment')]",
+        "akvDeployment": "[concat(parameters('keyVaultName'),'-',parameters('buildNumber'),'-deployment')]"
     },
     "resources": [
         {
