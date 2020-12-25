@@ -15,14 +15,15 @@ steps:
         $connection = az storage account show-connection-string -g "$(sharedRgName)" --name "$(tempStorageName)" --query connectionString      
         $token = az storage container generate-sas --name $(tempContainerName) --expiry $expireTime --permissions r --output tsv --connection-string $connection
         
-        echo $token
-        echo $connection
-
         Write-Host "##vso[task.setvariable variable=storageSasToken]$token"
+
+        echo $token
+        echo $(storageSasToken)
+        echo $connection       
 
 
   - task: AzureResourceManagerTemplateDeployment@3    
-    displayName: 'Create app service plan'
+    displayName: 'Provision resources'
     inputs:
       deploymentScope: 'Resource Group' 
       azureResourceManagerConnection: '$(azureSubscription)' 
