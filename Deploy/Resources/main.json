@@ -57,6 +57,41 @@
             "metadata": {
                 "description": "Location for the Resource Group"
             }
+        },
+        "serverName": {
+            "type": "string",
+            "defaultValue": "TBD",
+            "metadata": {
+                "description": "The name of the database server"
+            }
+        },
+        "databaseName": {
+            "type": "string",
+            "defaultValue": "TBD",
+            "metadata": {
+                "description": "The name of the database"
+            }
+        },
+        "adminUserName": {
+            "type": "string",
+            "defaultValue": "TBD",
+            "metadata": {
+                "description": "The admin user name of the SQL server"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "defaultValue": "TBD",
+            "metadata": {
+                "description": "The password of the administrator"
+            }
+        },
+        "allowedIpAddresses": {
+            "type": "array",
+            "defaultValue": ["TBD"],
+            "metadata": {
+                "description": "The whitelisted IP addresses"
+            }
         }
     },
     "variables": {
@@ -88,6 +123,38 @@
                     }
                 }
             }
+        },
+        {
+            "name": "[concat(parameters('serverName'),'deployment')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('templateUri'),'/Database/template.json','?', parameters('templateSas'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serverName": {
+                        "value": "[parameters('serverName')]"
+                    },
+                    "serverLocation": {
+                        "value": "[parameters('rgLocation')]"
+                    },
+                    "databaseName": {
+                        "value": "[parameters('databaseName')]"
+                    },
+                    "adminUserName": {
+                        "value": "[parameters('adminUserName')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    },
+                    "allowedIpAddresses": {
+                        "value": "[parameters('allowedIpAddresses')]"
+                    }
+                }
+            }            
         }
     ],
     "outputs": {}
