@@ -237,7 +237,7 @@
                         "value": "[parameters('rgName')]"
                     },
                     "sqlServerConnectionString": {
-                        "value": "[reference(variables('dbDeployment')).outputs.connectionString.value]"
+                        "value": "[reference(variables('dbDeployment')).outputs.connectionString]"
                     }
                 }
             },
