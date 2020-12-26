@@ -84,6 +84,7 @@ steps:
     inputs:
       targetType: 'inline' # Optional. Options: filePath, inline            
       script: |
-        $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName <resource-group-name> -Name <deployment-name>).Outputs.resourceID.value
+        $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
+        $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
         echo $psConnectionString
       
