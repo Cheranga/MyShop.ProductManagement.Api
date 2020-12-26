@@ -79,10 +79,11 @@ steps:
 
         echo $testConnectionString
 
-# - template: 'Steps/deployResourceGroup.yaml'
-# - template: 'Steps/provisionResources.yaml'
-# - template: 'Steps/deployAppServicePlan.yaml'
-# - template: 'Steps/deploySqlServerAndDatabase.yaml'
-# - template: 'Steps/deployWebApi.yaml'
-# - template: 'Steps/deployKeyVault.yaml'
-# - template: 'Steps/deployCode.yaml'
+
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline' # Optional. Options: filePath, inline            
+      script: |
+        $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName <resource-group-name> -Name <deployment-name>).Outputs.resourceID.value
+        echo $psConnectionString
+      
