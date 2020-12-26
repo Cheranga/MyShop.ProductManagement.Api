@@ -83,11 +83,11 @@ steps:
     displayName: "Using PS to get the SQL server connection string"
     inputs:
       azureSubscription: "$(azureSubscription)"
-      targetType: 'inline' # Optional. Options: filePath, inline  
+      targetType: 'inlineScript' # Optional. Options: filePath, inline  
       azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion          
       script: |        
         echo "hello"
-        # $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
-        # $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
-        # echo $psConnectionString  
+        $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
+        $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
+        echo $psConnectionString  
         
