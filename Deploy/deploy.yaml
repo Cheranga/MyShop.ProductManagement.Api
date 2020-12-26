@@ -91,6 +91,7 @@ steps:
 
 - task: AzurePowerShell@4
     inputs:
+      azureSubscription: "$(azureSubscription)"
       targetType: 'inline' # Optional. Options: filePath, inline            
       script: |        
         $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
