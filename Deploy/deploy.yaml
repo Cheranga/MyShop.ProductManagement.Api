@@ -84,9 +84,10 @@ steps:
     inputs:
       azureSubscription: "$(azureSubscription)"
       targetType: 'inline' # Optional. Options: filePath, inline  
-      azurePowerShellVersion: 'LatestVersion' # Required. Options: latestVersion, otherVersion          
+      azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion          
       script: |        
-        $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
-        $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
-        echo $psConnectionString  
+        echo "hello"
+        # $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
+        # $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
+        # echo $psConnectionString  
         
