@@ -84,6 +84,7 @@ steps:
     inputs:
       targetType: 'inline' # Optional. Options: filePath, inline            
       script: |
+        Install-Module -Name Az -AllowClobber -Scope CurrentUser
         $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
         $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
         echo $psConnectionString
