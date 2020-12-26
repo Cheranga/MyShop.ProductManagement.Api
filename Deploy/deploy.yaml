@@ -1,20 +1,20 @@
 parameters:
-- name: buildNumber
-  type: string
-  
+  - name: buildNumber
+    type: string
+
 steps:
-  - task: AzureResourceManagerTemplateDeployment@3    
-    displayName: 'Create resource group'
+  - task: AzureResourceManagerTemplateDeployment@3
+    displayName: "Create resource group"
     inputs:
-      deploymentScope: 'Subscription'
-      azureResourceManagerConnection: '$(azureSubscription)'            
-      location: '$(rgLocation)'                    
-      deploymentMode: 'Incremental'
-      csmFile: '$(Pipeline.Workspace)/deploy/ResourceGroup/template.json'
-      csmParametersFile: '$(Pipeline.Workspace)/deploy/ResourceGroup/template.parameters.json'
+      deploymentScope: "Subscription"
+      azureResourceManagerConnection: "$(azureSubscription)"
+      location: "$(rgLocation)"
+      deploymentMode: "Incremental"
+      csmFile: "$(Pipeline.Workspace)/deploy/ResourceGroup/template.json"
+      csmParametersFile: "$(Pipeline.Workspace)/deploy/ResourceGroup/template.parameters.json"
       overrideParameters: |
         -rgName "$(rgName)" 
-        -rgLocation "$(rgLocation)" 
+        -rgLocation "$(rgLocation)"
 
   - task: AzureCLI@2
     displayName: "Upload ARM templates and generate SAS token"
@@ -31,24 +31,23 @@ steps:
         $expireTime = $(date -u -d '30 minutes' +%Y-%m-%dT%H:%MZ)
         $connection = az storage account show-connection-string -g "$(sharedRgName)" --name "$(tempStorageName)" --query connectionString      
         $token = az storage container generate-sas --name $(tempContainerName) --expiry $expireTime --permissions r --output tsv --connection-string $connection
-        
+
         Write-Host "##vso[task.setvariable variable=storageSasToken]$token"
 
         echo $token
         echo $storageSasToken
-        echo $connection       
+        echo $connection
 
-
-  - task: AzureResourceManagerTemplateDeployment@3    
-    displayName: 'Provision resources'
+  - task: AzureResourceManagerTemplateDeployment@3
+    displayName: "Provision resources"
     inputs:
-      deploymentScope: 'Resource Group' 
-      azureResourceManagerConnection: '$(azureSubscription)' 
-      location: '$(rgLocation)' 
-      action: 'Create Or Update Resource Group' 
-      resourceGroupName: '$(rgName)'
-      deploymentMode: 'Incremental' 
-      csmFile: '$(Pipeline.Workspace)/deploy/main.json'       
+      deploymentScope: "Resource Group"
+      azureResourceManagerConnection: "$(azureSubscription)"
+      location: "$(rgLocation)"
+      action: "Create Or Update Resource Group"
+      resourceGroupName: "$(rgName)"
+      deploymentMode: "Incremental"
+      csmFile: "$(Pipeline.Workspace)/deploy/main.json"
       overrideParameters: |
         -buildNumber "${{parameters.buildNumber}}" 
         -storageName "$(tempStorageName)" 
@@ -66,15 +65,19 @@ steps:
         -allowedIpAddresses "$(allowedIpAddresses)" 
         -apiName "app-$(apiName)-$(environmentName)" 
         -aspNetCoreEnvironment "$(aspNetCoreEnvironment)" 
-        -keyVaultName "kv-$(apiName)-$(environmentName)" 
+        -keyVaultName "kv-$(apiName)-$(environmentName)"
 
-        
-        
-        
+  - task: AzureCLI@2
+    displayName: "Passing the SQL connection string"
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      scriptType: "pscore"
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        $dbDeployment = "$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
+        $testConnectionString = Get-AzResourceGroupDeployment -ResourceGroupName "$(sharedRgName)" -Name $dbDeployment).Outputs.connectionString.value
 
-
-
-
+        echo $testConnectionString
 
 # - template: 'Steps/deployResourceGroup.yaml'
 # - template: 'Steps/provisionResources.yaml'
