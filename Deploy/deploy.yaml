@@ -89,12 +89,12 @@ steps:
   #       $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
   #       echo $psConnectionString
 
-- task: AzurePowerShell@4
-    inputs:
-      azureSubscription: "$(azureSubscription)"
-      targetType: 'inline' # Optional. Options: filePath, inline            
-      script: |        
-        $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
-        $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
-        echo $psConnectionString  
-      
+  - task: AzurePowerShell@4
+      inputs:
+        azureSubscription: "$(azureSubscription)"
+        targetType: 'inline' # Optional. Options: filePath, inline            
+        script: |        
+          $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
+          $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
+          echo $psConnectionString  
+        
