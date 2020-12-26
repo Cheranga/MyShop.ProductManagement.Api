@@ -75,7 +75,7 @@ steps:
       scriptLocation: "inlineScript"
       inlineScript: |
         $dbDeployment = "$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
-        $testConnectionString = Get-AzResourceGroupDeployment -ResourceGroupName "$(sharedRgName)" -Name $dbDeployment).Outputs.connectionString.value
+        $testConnectionString = (Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name $dbDeployment).Outputs.connectionString.value
 
         echo $testConnectionString
 
