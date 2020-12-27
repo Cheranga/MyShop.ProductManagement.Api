@@ -46,4 +46,10 @@ steps:
       arguments: -r win-x64 -p:PublishSingleFile=True --self-contained false -o $(Build.ArtifactStagingDirectory)
       projects: '**/MyShop.ProductManagement.DbSetup.csproj'
       publishWebProjects: false
-    enabled: true            
+    enabled: true  
+
+  - task: PublishBuildArtifacts@1
+    displayName: "Publish Console App"
+    inputs:
+      pathtoPublish: "$(Build.ArtifactStagingDirectory)/MyShop.ProductManagement.DbSetup.*"
+      artifactName: "DbConsoleApp"              
