@@ -86,7 +86,6 @@ steps:
       scriptType: 'inlineScript' # Optional. Options: filePath, inline  
       azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion          
       inline: |        
-        echo "hello"
         $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
         $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
         echo $psConnectionString  

@@ -38,4 +38,12 @@ steps:
     displayName: "Copy ARM Templates"
     inputs:
       pathtoPublish: $(Build.Repository.LocalPath)/Deploy/Resources
-      artifactName: "deploy"      
+      artifactName: "deploy"
+
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: publish 
+      arguments: -r win-x64 -p:PublishSingleFile=True --self-contained false -o $(Build.ArtifactStagingDirectory)
+      projects: '**/MyShop.ProductManagement.DbSetup.csproj'
+      publishWebProjects: false
+    enabled: true            
