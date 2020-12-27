@@ -89,4 +89,9 @@ steps:
         $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
         $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
         echo $psConnectionString  
+
+        echo "Migrating the database..."
+        "$(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe" $psConnectionString
+
+
         
