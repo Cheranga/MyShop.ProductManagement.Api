@@ -90,7 +90,7 @@ steps:
         $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
         echo $psConnectionString          
         echo "$(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe"
-        "$(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe" $psConnectionString
+        # "$(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe" $psConnectionString
 
 
         
