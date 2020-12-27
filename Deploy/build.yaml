@@ -46,6 +46,7 @@ steps:
       arguments: -r win-x64 -p:PublishSingleFile=True --self-contained false -o $(Build.ArtifactStagingDirectory)
       projects: '**/MyShop.ProductManagement.DbSetup.csproj'
       publishWebProjects: false
+      zipAfterPublish: False
     enabled: true  
 
   - task: PublishBuildArtifacts@1
