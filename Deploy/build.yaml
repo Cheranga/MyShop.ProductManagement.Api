@@ -52,5 +52,5 @@ steps:
   - task: PublishBuildArtifacts@1
     displayName: "Publish Console App"
     inputs:
-      pathtoPublish: "$(Build.ArtifactStagingDirectory)"
+      pathtoPublish: "$(Build.ArtifactStagingDirectory)/MyShop.ProductManagement.DbSetup/MyShop.ProductManagement.DbSetup.exe"
       artifactName: "DbConsoleApp"              
