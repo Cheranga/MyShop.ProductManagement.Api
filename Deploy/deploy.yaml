@@ -83,7 +83,7 @@ steps:
     displayName: "Setup firewall rule for build agent"
     inputs:
       azureSubscription: "$(azureSubscription)"
-      ScriptPath: '$(Build.SourcesDirectory)\scripts\setupfirewall.ps1'
+      ScriptPath: '$(Pipeline.Workspace)/scripts/setupfirewall.ps1'
       ScriptArguments: "$(serverName)"
       azurePowerShellVersion: LatestVersion
 
