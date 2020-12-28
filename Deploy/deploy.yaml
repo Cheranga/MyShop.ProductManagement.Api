@@ -67,17 +67,17 @@ steps:
         -aspNetCoreEnvironment "$(aspNetCoreEnvironment)" 
         -keyVaultName "kv-$(apiName)-$(environmentName)"
 
-  - task: AzureCLI@2
-    displayName: "Passing the SQL connection string"
-    inputs:
-      azureSubscription: "$(azureSubscription)"
-      scriptType: "pscore"
-      scriptLocation: "inlineScript"
-      inlineScript: |
-        $dbDeployment = "$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
-        $testConnectionString=$(az deployment group show -g "$(rgName)" -n "$dbDeployment" --query properties.outputs.connectionString.value)
+  # - task: AzureCLI@2
+  #   displayName: "Passing the SQL connection string"
+  #   inputs:
+  #     azureSubscription: "$(azureSubscription)"
+  #     scriptType: "pscore"
+  #     scriptLocation: "inlineScript"
+  #     inlineScript: |
+  #       $dbDeployment = "$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
+  #       $testConnectionString=$(az deployment group show -g "$(rgName)" -n "$dbDeployment" --query properties.outputs.connectionString.value)
 
-        echo $testConnectionString
+  #       echo $testConnectionString
 
   - task: AzurePowerShell@2
     displayName: "Setup firewall rule for build agent"
@@ -88,7 +88,7 @@ steps:
       azurePowerShellVersion: LatestVersion
 
   - task: AzurePowerShell@4
-    displayName: "Using PS to get the SQL server connection string"
+    displayName: "Migrate database"
     inputs:
       azureSubscription: "$(azureSubscription)"
       scriptType: 'inlineScript' # Optional. Options: filePath, inline  
@@ -99,6 +99,14 @@ steps:
         echo $psConnectionString          
         echo "$(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe"
         $(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe $psConnectionString
+
+  - task: AzurePowerShell@2
+    displayName: "Remove firewall rule for build agent"
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      ScriptPath: '$(Pipeline.Workspace)/scripts/removefirewall.ps1'
+      ScriptArguments: "$(serverName) $(rgName)"
+      azurePowerShellVersion: LatestVersion        
 
   - task: AzureRmWebAppDeployment@3
     displayName: 'Deploy to Staging'
