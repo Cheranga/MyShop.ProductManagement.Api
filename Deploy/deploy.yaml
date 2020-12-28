@@ -84,7 +84,7 @@ steps:
     inputs:
       azureSubscription: "$(azureSubscription)"
       ScriptPath: '$(Pipeline.Workspace)/scripts/setupfirewall.ps1'
-      ScriptArguments: "$(serverName)"
+      ScriptArguments: "$(serverName) $(rgName)"
       azurePowerShellVersion: LatestVersion
 
   - task: AzurePowerShell@4
