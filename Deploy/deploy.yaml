@@ -67,18 +67,6 @@ steps:
         -aspNetCoreEnvironment "$(aspNetCoreEnvironment)" 
         -keyVaultName "kv-$(apiName)-$(environmentName)"
 
-  # - task: AzureCLI@2
-  #   displayName: "Passing the SQL connection string"
-  #   inputs:
-  #     azureSubscription: "$(azureSubscription)"
-  #     scriptType: "pscore"
-  #     scriptLocation: "inlineScript"
-  #     inlineScript: |
-  #       $dbDeployment = "$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
-  #       $testConnectionString=$(az deployment group show -g "$(rgName)" -n "$dbDeployment" --query properties.outputs.connectionString.value)
-
-  #       echo $testConnectionString
-
   - task: AzurePowerShell@2
     displayName: "Setup firewall rule for build agent"
     inputs:
@@ -87,18 +75,31 @@ steps:
       ScriptArguments: "$(serverName) $(rgName)"
       azurePowerShellVersion: LatestVersion
 
-  - task: AzurePowerShell@4
-    displayName: "Migrate database"
+  - task: AzureCLI@2
+    displayName: "Passing the SQL connection string"
     inputs:
       azureSubscription: "$(azureSubscription)"
-      scriptType: 'inlineScript' # Optional. Options: filePath, inline  
-      azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion          
-      inline: |        
-        $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
-        $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
-        echo $psConnectionString          
-        echo "$(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe"
-        $(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe $psConnectionString
+      scriptType: "pscore"
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        $dbDeployment = "$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
+        $testConnectionString=$(az deployment group show -g "$(rgName)" -n "$dbDeployment" --query properties.outputs.connectionString.value)
+
+        echo $testConnectionString
+        $(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe $testConnectionString
+
+  # - task: AzurePowerShell@4
+  #   displayName: "Migrate database"
+  #   inputs:
+  #     azureSubscription: "$(azureSubscription)"
+  #     scriptType: 'inlineScript' # Optional. Options: filePath, inline  
+  #     azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion          
+  #     inline: |        
+  #       $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
+  #       $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
+  #       echo $psConnectionString          
+  #       echo "$(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe"
+  #       $(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe $psConnectionString
 
   - task: AzurePowerShell@2
     displayName: "Remove firewall rule for build agent"
