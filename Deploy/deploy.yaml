@@ -76,7 +76,7 @@ steps:
       azurePowerShellVersion: LatestVersion
 
   - task: AzureCLI@2
-    displayName: "Passing the SQL connection string"
+    displayName: "Migrate the database"
     inputs:
       azureSubscription: "$(azureSubscription)"
       scriptType: "pscore"
@@ -88,6 +88,7 @@ steps:
         echo $testConnectionString
         $(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe $testConnectionString
 
+  # WE CAN USE THE BELOW POWERSHELL TASK AS AN ALTERNATIVE TO THE PREVIOUS AZURE CLI VERSION.
   # - task: AzurePowerShell@4
   #   displayName: "Migrate database"
   #   inputs:

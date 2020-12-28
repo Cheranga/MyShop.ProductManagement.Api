@@ -41,6 +41,7 @@ steps:
       artifactName: "deploy"
 
   - task: DotNetCoreCLI@2
+    displayName: "Publish database migration console app"
     inputs:
       command: publish 
       arguments: -r win-x64 -p:PublishSingleFile=True --self-contained false -o $(Build.ArtifactStagingDirectory)
@@ -50,7 +51,7 @@ steps:
     enabled: true  
 
   - task: PublishBuildArtifacts@1
-    displayName: "Publish Console App"
+    displayName: "Create artifact for database migration"
     inputs:
       pathtoPublish: "$(Build.ArtifactStagingDirectory)/MyShop.ProductManagement.DbSetup/MyShop.ProductManagement.DbSetup.exe"
       artifactName: "DbConsoleApp"              
