@@ -79,6 +79,14 @@ steps:
 
         echo $testConnectionString
 
+  - task: AzurePowerShell@2
+    displayName: Azure PowerShell script: FilePath
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      ScriptPath: '$(Build.SourcesDirectory)\scripts\setupfirewall.ps1'
+      ScriptArguments: "$(serverName)"
+      azurePowerShellVersion: LatestVersion
+
   - task: AzurePowerShell@4
     displayName: "Using PS to get the SQL server connection string"
     inputs:
