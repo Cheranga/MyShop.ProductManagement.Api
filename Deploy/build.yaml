@@ -58,5 +58,5 @@ steps:
   - task: PublishBuildArtifacts@1
     displayName: "Publish Scripts"
     inputs:
-      pathtoPublish: Scripts
+      pathtoPublish: Deploy/Scripts
       artifactName: "scripts"                    
