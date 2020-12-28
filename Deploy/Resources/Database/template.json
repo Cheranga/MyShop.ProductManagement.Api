@@ -82,6 +82,19 @@
         "startIpAddress": "[parameters('allowedIpAddresses')[copyIndex()]]",
         "endIpAddress": "[parameters('allowedIpAddresses')[copyIndex()]]"
       }
+    },
+    {
+      "type": "Microsoft.Sql/servers/firewallRules",
+      "name": "[concat(parameters('serverName'), '/AllowAllWindowsAzureIps')]",
+      "location": "[parameters('serverLocation')]",
+      "apiVersion": "2020-02-02-preview",      
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+      ],
+      "properties": {
+        "startIpAddress": "0.0.0.0",
+        "endIpAddress": "0.0.0.0"
+      }
     }
   ],
   "outputs": {
