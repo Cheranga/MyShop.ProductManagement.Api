@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.Services.AppAuthentication;
@@ -19,15 +20,19 @@ namespace MyShop.ProductManagement.Api
                 .ConfigureAppConfiguration((context, config) =>
                 {
                     var builtConfig = config.Build();
-                    var azureServiceTokenProvider = new AzureServiceTokenProvider();
-                    var keyVaultClient = new KeyVaultClient(
-                        new KeyVaultClient.AuthenticationCallback(
-                            azureServiceTokenProvider.KeyVaultTokenCallback));
+                    var isLocalEnvironment = string.Equals(builtConfig["ASPNETCORE_ENVIRONMENT"], "Local", StringComparison.OrdinalIgnoreCase);
+                    if (!isLocalEnvironment)
+                    {
+                        var azureServiceTokenProvider = new AzureServiceTokenProvider();
+                        var keyVaultClient = new KeyVaultClient(
+                            new KeyVaultClient.AuthenticationCallback(
+                                azureServiceTokenProvider.KeyVaultTokenCallback));
 
-                    config.AddAzureKeyVault(
-                        $"https://{builtConfig["KeyVaultName"]}.vault.azure.net/",
-                        keyVaultClient,
-                        new DefaultKeyVaultSecretManager());
+                        config.AddAzureKeyVault(
+                            $"https://{builtConfig["KeyVaultName"]}.vault.azure.net/",
+                            keyVaultClient,
+                            new DefaultKeyVaultSecretManager());
+                    }
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
