@@ -21,7 +21,7 @@ steps:
       arguments: '--configuration Release'      
 
   - task: DotNetCoreCLI@2
-    displayName: "Dotnet Publish"
+    displayName: "Publish web API"
     inputs:
       command: "publish"
       publishWebProjects: true
@@ -29,13 +29,13 @@ steps:
       zipAfterPublish: True
 
   - task: PublishBuildArtifacts@1
-    displayName: "Publish Build Artifact"
+    displayName: "Create artifact for web API"
     inputs:
       pathtoPublish: "$(Build.ArtifactStagingDirectory)"
       artifactName: "WebApp"
 
   - task: PublishBuildArtifacts@1
-    displayName: "Copy ARM Templates"
+    displayName: "Create artifacts for ARM templates"
     inputs:
       pathtoPublish: $(Build.Repository.LocalPath)/Deploy/Resources
       artifactName: "deploy"
