@@ -1,19 +1,16 @@
+using System;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentValidation;
-using MediatR;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using MyShop.ProductManagement.Api.Configs;
 using MyShop.ProductManagement.Api.DataAccess;
 using MyShop.ProductManagement.Api.Services;
@@ -32,16 +29,9 @@ namespace MyShop.ProductManagement.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers()
-                .ConfigureApiBehaviorOptions(options =>
-                {
-                    options.SuppressMapClientErrors = true;
-                });
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MyShop.ProductManagement.Api", Version = "v1" });
-            });
+                .ConfigureApiBehaviorOptions(options => { options.SuppressMapClientErrors = true; });
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "MyShop.ProductManagement.Api", Version = "v1"}); });
 
             services.AddApiVersioning(options =>
             {
@@ -62,7 +52,21 @@ namespace MyShop.ProductManagement.Api
             services.AddValidatorsFromAssembly(typeof(Startup).Assembly);
             services.AddMediatR(typeof(Startup).Assembly);
 
-            services.AddLogging();
+            services.AddLogging(builder =>
+            {
+                var isLocal = string.Equals(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), "Local", StringComparison.OrdinalIgnoreCase);
+                if (isLocal)
+                {
+                    builder.AddConsole();
+                }
+                else
+                {
+                    var instrumentationKey = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY");
+                    builder.AddApplicationInsights(instrumentationKey);
+                    builder.AddFilter<ApplicationInsightsLoggerProvider>("", LogLevel.Debug);
+                    builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Debug);
+                }
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,10 +85,7 @@ namespace MyShop.ProductManagement.Api
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }
