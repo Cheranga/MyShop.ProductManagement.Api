@@ -23,14 +23,14 @@ steps:
       scriptType: "pscore"
       scriptLocation: "inlineScript"
       inlineScript: |
-        az storage account create -n "$(tempStorageName)" -g "$(sharedRgName)" -l "$(sharedRgLocation)" 
-        az storage container create -n "$(tempContainerName)" --account-name "$(tempStorageName)" --auth-mode login 
-        $accountKey = (az storage account keys list -g "$(sharedRgName)" -n "$(tempStorageName)" | ConvertFrom-Json)[0].value
-        az storage blob upload-batch --source "$(Pipeline.Workspace)/deploy/" --pattern *.json --destination "$(tempContainerName)" --account-name $(tempStorageName) --account-key $accountKey
+        az storage account create -n "$(sharedStorageName)" -g "$(sharedRgName)" -l "$(sharedRgLocation)" 
+        az storage container create -n "$(sharedContainerName)" --account-name "$(sharedStorageName)" --auth-mode login 
+        $accountKey = (az storage account keys list -g "$(sharedRgName)" -n "$(sharedStorageName)" | ConvertFrom-Json)[0].value
+        az storage blob upload-batch --source "$(Pipeline.Workspace)/deploy/" --pattern *.json --destination "$(sharedContainerName)" --account-name $(sharedStorageName) --account-key $accountKey
 
         $expireTime = $(date -u -d '30 minutes' +%Y-%m-%dT%H:%MZ)
-        $connection = az storage account show-connection-string -g "$(sharedRgName)" --name "$(tempStorageName)" --query connectionString      
-        $token = az storage container generate-sas --name $(tempContainerName) --expiry $expireTime --permissions r --output tsv --connection-string $connection
+        $connection = az storage account show-connection-string -g "$(sharedRgName)" --name "$(sharedStorageName)" --query connectionString      
+        $token = az storage container generate-sas --name $(sharedContainerName) --expiry $expireTime --permissions r --output tsv --connection-string $connection
 
         Write-Host "##vso[task.setvariable variable=storageSasToken]$token"
 
@@ -50,8 +50,8 @@ steps:
       csmFile: "$(Pipeline.Workspace)/deploy/main.json"
       overrideParameters: |
         -buildNumber "${{parameters.buildNumber}}" 
-        -storageName "$(tempStorageName)" 
-        -storageContainer "$(tempContainerName)" 
+        -storageName "$(sharedStorageName)" 
+        -storageContainer "$(sharedContainerName)" 
         -templateSas "$(storageSasToken)" 
         -rgName "$(rgName)" 
         -rgLocation "$(rgLocation)" 

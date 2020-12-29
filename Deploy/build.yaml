@@ -1,16 +1,9 @@
 steps:
 
-  # - task: UseDotNet@2
-  #   inputs:
-  #     version: '5.0.x'
-  #     performMultiLevelLookup: true
-  #     includePreviewVersions: true # Required for preview versions
-
   - task: DotNetCoreCLI@2
     displayName: 'Build $(platformConfiguration)'
     inputs:
-      command: "build"
-      # arguments: '--configuration $(BuildConfiguration)'
+      command: "build"      
       projects: '**/*.csproj'
 
   - task: DotNetCoreCLI@2
