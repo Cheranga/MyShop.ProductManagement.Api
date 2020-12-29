@@ -23,9 +23,6 @@
         },
         "appInsightsKey": {
             "type": "securestring"
-        },
-        "appInsightsConnectionString": {
-            "type": "securestring"
         }
     },
     "variables": {
@@ -83,8 +80,7 @@
                     "apiVersion": "2019-08-01",
                     "properties": {
                         "ASPNETCORE_ENVIRONMENT": "[parameters('aspNetCoreEnvironment')]",
-                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('appInsightsKey')]",
-                        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]",
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('appInsightsKey')]",                        
                         "DIAGNOSTICS_AZUREBLOBCONTAINERSASURL": "",
                         "DIAGNOSTICS_AZUREBLOBRETENTIONINDAYS": "90",
                         "WEBSITE_TIME_ZONE": "[parameters('webSiteTimeZone')]"
@@ -129,7 +125,6 @@
                     "properties": {
                         "ASPNETCORE_ENVIRONMENT": "[parameters('aspNetCoreEnvironment')]",
                         "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('appInsightsKey')]",
-                        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]",
                         "DIAGNOSTICS_AZUREBLOBCONTAINERSASURL": "",
                         "DIAGNOSTICS_AZUREBLOBRETENTIONINDAYS": "90",
                         "WEBSITE_TIME_ZONE": "[parameters('webSiteTimeZone')]"

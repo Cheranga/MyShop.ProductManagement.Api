@@ -33,10 +33,6 @@
         "appInsightsKey": {
             "type": "string",
             "value": "[reference(resourceId('Microsoft.Insights/components', parameters('name')), '2014-04-01').InstrumentationKey]"
-        },
-        "appInsightsConnectionString": {
-            "type": "string",
-            "value": "[reference(resourceId('Microsoft.Insights/components', parameters('name')), '2014-04-01').ConnectionString]"
         }
     }
 }
