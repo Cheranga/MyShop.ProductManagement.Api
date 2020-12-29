@@ -57,7 +57,7 @@ steps:
       artifactName: "DbConsoleApp"              
 
   - task: PublishBuildArtifacts@1
-    displayName: "Publish Scripts"
+    displayName: "Create artifact for scripts"
     inputs:
       pathtoPublish: Deploy/Scripts
       artifactName: "scripts"                    
