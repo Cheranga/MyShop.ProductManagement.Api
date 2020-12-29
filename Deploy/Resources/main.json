@@ -217,6 +217,9 @@
                     },
                     "appInsightsKey":{
                         "value": "[reference(variables('appInsightsDeployment')).outputs.appInsightsKey.value]"
+                    },
+                    "appInsightsConnectionString":{
+                        "value":"[reference(variables('appInsightsDeployment')).outputs.appInsightsConnectionString.value]"
                     }
                 }
             },

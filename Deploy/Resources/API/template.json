@@ -22,7 +22,10 @@
             "defaultValue": "AUS Eastern Standard Time"
         },
         "appInsightsKey": {
-            "type": "securestring"            
+            "type": "securestring"
+        },
+        "appInsightsConnectionString": {
+            "type": "securestring"
         }
     },
     "variables": {
@@ -38,7 +41,7 @@
             "location": "[parameters('apiLocation')]",
             "properties": {
                 "name": "[parameters('apiName')]",
-                "serverFarmId":"[resourceId('Microsoft.Web/serverfarms', parameters('planName'))]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('planName'))]",
                 "hostingEnvironment": null,
                 "hostNameSslStates": [
                     {
@@ -80,7 +83,8 @@
                     "apiVersion": "2019-08-01",
                     "properties": {
                         "ASPNETCORE_ENVIRONMENT": "[parameters('aspNetCoreEnvironment')]",
-                        "APPINSIGHTS_INSTRUMENTATIONKEY":"[parameters('appInsightsKey')]",
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('appInsightsKey')]",
+                        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]",
                         "DIAGNOSTICS_AZUREBLOBCONTAINERSASURL": "",
                         "DIAGNOSTICS_AZUREBLOBRETENTIONINDAYS": "90",
                         "WEBSITE_TIME_ZONE": "[parameters('webSiteTimeZone')]"
@@ -124,9 +128,10 @@
                     "apiVersion": "2019-08-01",
                     "properties": {
                         "ASPNETCORE_ENVIRONMENT": "[parameters('aspNetCoreEnvironment')]",
-                        "APPINSIGHTS_INSTRUMENTATIONKEY":"[parameters('appInsightsKey')]",
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('appInsightsKey')]",
+                        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]",
                         "DIAGNOSTICS_AZUREBLOBCONTAINERSASURL": "",
-                        "DIAGNOSTICS_AZUREBLOBRETENTIONINDAYS": "90",                        
+                        "DIAGNOSTICS_AZUREBLOBRETENTIONINDAYS": "90",
                         "WEBSITE_TIME_ZONE": "[parameters('webSiteTimeZone')]"
                     },
                     "dependsOn": [

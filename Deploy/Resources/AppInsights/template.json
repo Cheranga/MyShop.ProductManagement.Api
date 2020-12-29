@@ -18,7 +18,7 @@
     "resources": [
         {
             "name": "[parameters('name')]",
-            "type": "microsoft.insights/components",            
+            "type": "microsoft.insights/components",
             "location": "[parameters('rgLocation')]",
             "apiVersion": "2018-05-01-preview",
             "properties": {
@@ -33,6 +33,10 @@
         "appInsightsKey": {
             "type": "string",
             "value": "[reference(resourceId('Microsoft.Insights/components', parameters('name')), '2014-04-01').InstrumentationKey]"
+        },
+        "appInsightsConnectionString": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Insights/components', parameters('name')), '2014-04-01').ConnectionString]"
         }
     }
 }
