@@ -215,7 +215,7 @@
                     "websiteTimeZone": {
                         "value": "AUS Eastern Standard Time"
                     },
-                    "APPINSIGHTS_INSTRUMENTATIONKEY":{
+                    "appInsightsKey":{
                         "value": "[reference(variables('appInsightsDeployment')).outputs.appInsightsKey.value]"
                     }
                 }
