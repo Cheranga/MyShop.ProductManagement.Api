@@ -3,8 +3,8 @@
     "contentVersion": "1.0.0.1",
     "parameters": {
         "buildNumber": {
-            "type":"string",
-            "defaultValue":"TBD"
+            "type": "string",
+            "defaultValue": "TBD"
         },
         "planName": {
             "type": "string",
@@ -124,7 +124,8 @@
         "aspDeployment": "[concat(parameters('planName'),'-',parameters('buildNumber'),'-deployment')]",
         "dbDeployment": "[concat(parameters('serverName'),'-',parameters('buildNumber'),'-deployment')]",
         "apiDeployment": "[concat(parameters('apiName'),'-',parameters('buildNumber'),'-deployment')]",
-        "akvDeployment": "[concat(parameters('keyVaultName'),'-',parameters('buildNumber'),'-deployment')]"
+        "akvDeployment": "[concat(parameters('keyVaultName'),'-',parameters('buildNumber'),'-deployment')]",
+        "appInsightsDeployment": "[concat(parameters('apiName'),'insights-',parameters('buildNumber'),'-deployment')]"
     },
     "resources": [
         {
@@ -213,11 +214,15 @@
                     },
                     "websiteTimeZone": {
                         "value": "AUS Eastern Standard Time"
+                    },
+                    "APPINSIGHTS_INSTRUMENTATIONKEY":{
+                        "value": "[reference(variables('appInsightsDeployment')).outputs.appInsightsKey.value]"
                     }
                 }
             },
             "dependsOn": [
-                "[variables('aspDeployment')]"
+                "[variables('aspDeployment')]",
+                "[variables('appInsightsDeployment')]"
             ]
         },
         {
@@ -249,6 +254,26 @@
                 "[variables('dbDeployment')]",
                 "[variables('apiDeployment')]"
             ]
+        },
+        {
+            "name": "[variables('appInsightsDeployment')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('templateUri'),'/AppInsights/template.json','?', parameters('templateSas'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[concat('ins-',parameters('apiName'))]"
+                    },
+                    "rgLocation": {
+                        "value": "[parameters('rgLocation')]"
+                    }
+                }
+            }
         }
     ],
     "outputs": {}
