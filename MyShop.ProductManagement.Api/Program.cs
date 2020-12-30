@@ -47,8 +47,10 @@ namespace MyShop.ProductManagement.Api
                     {
                         var instrumentationKey = context.Configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
                         builder.AddApplicationInsights(instrumentationKey, options => { options.FlushOnDispose = true; });
+                        builder.AddAzureWebAppDiagnostics();
 
                         builder.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>("", LogLevel.Debug);
+                        builder.AddFilter<Microsoft.Extensions.Logging.AzureAppServices.FileLoggerProvider>("", LogLevel.Debug);
                     }
                 })
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
