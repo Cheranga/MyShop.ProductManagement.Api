@@ -56,7 +56,7 @@ steps:
     displayName: "Provision resources"
     inputs:
       azureResourceManagerConnection: "$(azureSubscription)"
-      deploymentName: "main-$(apiName)-$(environmentName)-deployment"
+      deploymentName: "main-$(apiName)-$(environmentName)-${{parameters.buildNumber}}-deployment"
       deploymentScope: "Resource Group"
       deploymentMode: "Incremental"      
       location: "$(rgLocation)"
