@@ -62,10 +62,7 @@ namespace MyShop.ProductManagement.Api
                 else
                 {
                     var instrumentationKey = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY");
-                    //builder.AddApplicationInsights(instrumentationKey);
                     services.AddApplicationInsightsTelemetry(instrumentationKey);
-                    //builder.AddFilter<ApplicationInsightsLoggerProvider>("", LogLevel.Debug);
-                    //builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Debug);
                 }
             });
         }

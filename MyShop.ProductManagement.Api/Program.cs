@@ -46,7 +46,10 @@ namespace MyShop.ProductManagement.Api
                     else
                     {
                         var instrumentationKey = context.Configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
-                        builder.AddApplicationInsights(instrumentationKey, options => { options.FlushOnDispose = true; });
+                        builder.AddApplicationInsights(instrumentationKey, options =>
+                        {
+                            options.FlushOnDispose = true;
+                        });
                         builder.AddAzureWebAppDiagnostics();
 
                         builder.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>("", LogLevel.Debug);
