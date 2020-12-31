@@ -41,12 +41,14 @@ steps:
   - task: AzureResourceManagerTemplateDeployment@3
     displayName: "Provision resources"
     inputs:
-      deploymentScope: "Resource Group"
       azureResourceManagerConnection: "$(azureSubscription)"
+      deploymentName: "main-$(apiName)-$(environmentName)-deployment"
+      deploymentScope: "Resource Group"
+      deploymentMode: "Incremental"      
       location: "$(rgLocation)"
       action: "Create Or Update Resource Group"
       resourceGroupName: "$(rgName)"
-      deploymentMode: "Incremental"
+
       csmFile: "$(Pipeline.Workspace)/deploy/main.json"
       overrideParameters: |
         -buildNumber "${{parameters.buildNumber}}" 

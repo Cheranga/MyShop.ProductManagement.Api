@@ -214,11 +214,15 @@
                     },
                     "websiteTimeZone": {
                         "value": "AUS Eastern Standard Time"
+                    },
+                    "appInsightsKey": {
+                        "value": "[reference(variables('appInsightsDeployment')).outputs.appInsightsKey.value]"
                     }
                 }
             },
             "dependsOn": [
-                "[variables('aspDeployment')]"
+                "[variables('aspDeployment')]",
+                "[variables('appInsightsDeployment')]"
             ]
         },
         {
