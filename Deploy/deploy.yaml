@@ -33,8 +33,6 @@ steps:
         $token = az storage container generate-sas --name $(sharedContainerName) --expiry $expireTime --permissions r --output tsv --connection-string $connection
 
         Write-Host "##vso[task.setvariable variable=storageSasToken]$token"
-        $someSettingValue="111222"
-        Write-Host "##vso[task.setvariable variable=SomeConfiguration.SomeSetting]$someSettingValue"
 
         echo $token
         echo $storageSasToken
@@ -68,6 +66,19 @@ steps:
         -apiName "app-$(apiName)-$(environmentName)" 
         -aspNetCoreEnvironment "$(aspNetCoreEnvironment)" 
         -keyVaultName "kv-$(apiName)-$(environmentName)"
+
+ 
+  - task: AzurePowerShell@4
+    displayName: "Setting up variables to be transformed in configurations"
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      scriptType: 'inlineScript' # Optional. Options: filePath, inline
+      azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion
+      inline: |
+        $psAppInsightsDeployment="$(apiName)"+"insights-"+"${{parameters.buildNumber}}"+"-deployment"
+        $psAppInsightsKey=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psAppInsightsDeployment").Outputs.appInsightsKey.value
+        
+        Write-Host "##vso[task.setvariable variable=SomeConfiguration.SomeSetting]$psAppInsightsKey"
 
   - task: FileTransform@1
     displayName: "Transform configurations"
