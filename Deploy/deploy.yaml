@@ -34,6 +34,8 @@ steps:
 
         Write-Host "##vso[task.setvariable variable=storageSasToken]$token"
 
+        Write-Host "##vso[task.setvariable variable=SomeConfiguration.SomeSetting]111222"
+
         echo $token
         echo $storageSasToken
         echo $connection
