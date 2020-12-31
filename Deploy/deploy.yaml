@@ -67,7 +67,7 @@ steps:
         -aspNetCoreEnvironment "$(aspNetCoreEnvironment)" 
         -keyVaultName "kv-$(apiName)-$(environmentName)"
 
- The below two tasks ("Setting up variables to be transformed in configurations" and "Setup firewall rule for build agent" can be used to transform web API configurations)
+#  The below two tasks ("Setting up variables to be transformed in configurations" and "Setup firewall rule for build agent" can be used to transform web API configurations)
   # - task: AzurePowerShell@4
   #   displayName: "Setting up variables to be transformed in configurations"
   #   inputs:
