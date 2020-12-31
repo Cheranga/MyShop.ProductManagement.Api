@@ -30,3 +30,5 @@ variables:
   value: "sg$(apiName)$(environmentName)"
 - name: sharedContainerName
   value: "armtemplates"  
+- name: deploymentsOlderThan
+  value: -1  

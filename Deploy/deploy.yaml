@@ -15,6 +15,20 @@ steps:
       overrideParameters: |
         -rgName "$(rgName)" 
         -rgLocation "$(rgLocation)"
+        
+  - task: AzurePowerShell@4
+    displayName: "Delete old deployments"
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      scriptType: 'inlineScript' # Optional. Options: filePath, inline
+      azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion
+      inline: |        
+        $deployments = Get-AzResourceGroupDeployment -ResourceGroupName $(rgName) | Where-Object Timestamp -lt ((Get-Date).AddDays($(deploymentsOlderThan)))
+
+        foreach ($deployment in $deployments) {
+          Remove-AzResourceGroupDeployment -ResourceGroupName $(rgName) -Name $deployment.DeploymentName
+          Write-Host 'Removed Deployment: ' $deployment.DeploymentName 
+        }        
 
   - task: AzureCLI@2
     displayName: "Upload ARM templates and generate SAS token"
