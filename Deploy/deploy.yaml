@@ -67,11 +67,18 @@ steps:
         -aspNetCoreEnvironment "$(aspNetCoreEnvironment)" 
         -keyVaultName "kv-$(apiName)-$(environmentName)"
 
+  - task: FileTransform@1
+    displayName: "Transform configurations"
+    inputs:
+      folderPath: "$(Pipeline.Workspace)/WebApp/MyShop.ProductManagement.Api.zip"
+      fileType: json
+      targetFiles: "**/appsettings.$(aspNetCoreEnvironment).json"
+
   - task: AzurePowerShell@2
     displayName: "Setup firewall rule for build agent"
     inputs:
       azureSubscription: "$(azureSubscription)"
-      ScriptPath: '$(Pipeline.Workspace)/scripts/setupfirewall.ps1'
+      ScriptPath: "$(Pipeline.Workspace)/scripts/setupfirewall.ps1"
       ScriptArguments: "$(serverName) $(rgName)"
       azurePowerShellVersion: LatestVersion
 
@@ -93,12 +100,12 @@ steps:
   #   displayName: "Migrate database"
   #   inputs:
   #     azureSubscription: "$(azureSubscription)"
-  #     scriptType: 'inlineScript' # Optional. Options: filePath, inline  
-  #     azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion          
-  #     inline: |        
+  #     scriptType: 'inlineScript' # Optional. Options: filePath, inline
+  #     azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion
+  #     inline: |
   #       $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
   #       $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
-  #       echo $psConnectionString          
+  #       echo $psConnectionString
   #       echo "$(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe"
   #       $(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe $psConnectionString
 
@@ -106,49 +113,46 @@ steps:
     displayName: "Remove firewall rule for build agent"
     inputs:
       azureSubscription: "$(azureSubscription)"
-      ScriptPath: '$(Pipeline.Workspace)/scripts/removefirewall.ps1'
+      ScriptPath: "$(Pipeline.Workspace)/scripts/removefirewall.ps1"
       ScriptArguments: "$(serverName) $(rgName)"
-      azurePowerShellVersion: LatestVersion        
+      azurePowerShellVersion: LatestVersion
 
   - task: AzureRmWebAppDeployment@3
-    displayName: 'Deploy to Staging'
+    displayName: "Deploy to Staging"
     inputs:
-      azureSubscription: '$(azureSubscription)'
-      WebAppName: 'app-$(apiName)-$(environmentName)'
+      azureSubscription: "$(azureSubscription)"
+      WebAppName: "app-$(apiName)-$(environmentName)"
       DeployToSlotFlag: true
-      ResourceGroupName: '$(rgName)'
+      ResourceGroupName: "$(rgName)"
       SlotName: staging
-      Package: '$(Pipeline.Workspace)/WebApp/MyShop.ProductManagement.Api.zip'
-      ScriptType: 'Inline Script'
+      Package: "$(Pipeline.Workspace)/WebApp/MyShop.ProductManagement.Api.zip"
+      ScriptType: "Inline Script"
       enableXmlVariableSubstitution: true
 
   - task: AzureAppServiceManage@0
-    displayName: 'Start Staging Slot'
+    displayName: "Start Staging Slot"
     inputs:
-      azureSubscription: '$(azureSubscription)' 
-      action: 'Start Azure App Service'
-      webAppName: 'app-$(apiName)-$(environmentName)'
+      azureSubscription: "$(azureSubscription)"
+      action: "Start Azure App Service"
+      webAppName: "app-$(apiName)-$(environmentName)"
       specifySlotOrASE: true
-      resourceGroupName: '$(rgName)'
+      resourceGroupName: "$(rgName)"
       slot: staging
 
   - task: AzureAppServiceManage@0
-    displayName: 'Swap to Production'    
+    displayName: "Swap to Production"
     inputs:
-      azureSubscription: '$(azureSubscription)'
-      webAppName: 'app-$(apiName)-$(environmentName)'
-      resourceGroupName: '$(rgName)'
+      azureSubscription: "$(azureSubscription)"
+      webAppName: "app-$(apiName)-$(environmentName)"
+      resourceGroupName: "$(rgName)"
       sourceSlot: staging
 
   - task: AzureAppServiceManage@0
-    displayName: 'Stop Staging Slot'    
+    displayName: "Stop Staging Slot"
     inputs:
-      azureSubscription: '$(azureSubscription)'
-      action: 'Stop Azure App Service'
-      webAppName: 'app-$(apiName)-$(environmentName)'
+      azureSubscription: "$(azureSubscription)"
+      action: "Stop Azure App Service"
+      webAppName: "app-$(apiName)-$(environmentName)"
       specifySlotOrASE: true
-      resourceGroupName: '$(rgName)'
-      slot: staging        
-
-
-        
+      resourceGroupName: "$(rgName)"
+      slot: staging
