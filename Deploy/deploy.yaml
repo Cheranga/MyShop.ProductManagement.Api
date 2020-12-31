@@ -78,7 +78,7 @@ steps:
         $psAppInsightsDeployment="app-$(apiName)-$(environmentName)insights-"+"${{parameters.buildNumber}}-deployment"
         $psAppInsightsKey=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psAppInsightsDeployment").Outputs.appInsightsKey.value
         
-        Write-Host "##vso[task.setvariable variable=SomeConfiguration.SomeSetting]$psAppInsightsKey"
+        Write-Host "##vso[task.setvariable variable=ApplicationInsights.InstrumentationKey]$psAppInsightsKey"
 
   - task: FileTransform@1
     displayName: "Transform configurations"

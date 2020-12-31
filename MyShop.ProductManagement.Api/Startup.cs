@@ -61,8 +61,12 @@ namespace MyShop.ProductManagement.Api
                 }
                 else
                 {
-                    var instrumentationKey = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY");
-                    services.AddApplicationInsightsTelemetry(instrumentationKey);
+                    //var instrumentationKey = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY");
+                    //services.AddApplicationInsightsTelemetry(instrumentationKey);
+                    services.AddApplicationInsightsTelemetry(options =>
+                    {
+                        Configuration.Bind("ApplicationInsights", options);
+                    });
                 }
             });
         }
