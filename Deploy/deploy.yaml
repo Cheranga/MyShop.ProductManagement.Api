@@ -75,7 +75,7 @@ steps:
       scriptType: 'inlineScript' # Optional. Options: filePath, inline
       azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion
       inline: |
-        $psAppInsightsDeployment="app-"+"$(apiName)-"+$(environmentName)insights-"+${{parameters.buildNumber}}"+"-deployment"
+        $psAppInsightsDeployment="app-$(apiName)-$(environmentName)insights-${{parameters.buildNumber}}-deployment"
         $psAppInsightsKey=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psAppInsightsDeployment").Outputs.appInsightsKey.value
         
         Write-Host "##vso[task.setvariable variable=SomeConfiguration.SomeSetting]$psAppInsightsKey"
