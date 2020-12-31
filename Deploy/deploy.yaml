@@ -67,25 +67,25 @@ steps:
         -aspNetCoreEnvironment "$(aspNetCoreEnvironment)" 
         -keyVaultName "kv-$(apiName)-$(environmentName)"
 
- 
-  - task: AzurePowerShell@4
-    displayName: "Setting up variables to be transformed in configurations"
-    inputs:
-      azureSubscription: "$(azureSubscription)"
-      scriptType: 'inlineScript' # Optional. Options: filePath, inline
-      azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion
-      inline: |
-        $psAppInsightsDeployment="app-$(apiName)-$(environmentName)insights-"+"${{parameters.buildNumber}}-deployment"
-        $psAppInsightsKey=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psAppInsightsDeployment").Outputs.appInsightsKey.value
+ The below two tasks ("Setting up variables to be transformed in configurations" and "Setup firewall rule for build agent" can be used to transform web API configurations)
+  # - task: AzurePowerShell@4
+  #   displayName: "Setting up variables to be transformed in configurations"
+  #   inputs:
+  #     azureSubscription: "$(azureSubscription)"
+  #     scriptType: 'inlineScript' # Optional. Options: filePath, inline
+  #     azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion
+  #     inline: |
+  #       $psAppInsightsDeployment="app-$(apiName)-$(environmentName)insights-"+"${{parameters.buildNumber}}-deployment"
+  #       $psAppInsightsKey=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psAppInsightsDeployment").Outputs.appInsightsKey.value
         
-        Write-Host "##vso[task.setvariable variable=ApplicationInsights.InstrumentationKey]$psAppInsightsKey"
+  #       Write-Host "##vso[task.setvariable variable=ApplicationInsights.InstrumentationKey]$psAppInsightsKey"
 
-  - task: FileTransform@1
-    displayName: "Transform configurations"
-    inputs:
-      folderPath: "$(Pipeline.Workspace)/WebApp/MyShop.ProductManagement.Api.zip"
-      fileType: json
-      targetFiles: "**/appsettings.$(aspNetCoreEnvironment).json"
+  # - task: FileTransform@1
+  #   displayName: "Transform configurations"
+  #   inputs:
+  #     folderPath: "$(Pipeline.Workspace)/WebApp/MyShop.ProductManagement.Api.zip"
+  #     fileType: json
+  #     targetFiles: "**/appsettings.$(aspNetCoreEnvironment).json"
 
   - task: AzurePowerShell@2
     displayName: "Setup firewall rule for build agent"

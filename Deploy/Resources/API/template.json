@@ -20,9 +20,6 @@
         "websiteTimeZone": {
             "type": "string",
             "defaultValue": "AUS Eastern Standard Time"
-        },
-        "appInsightsKey": {
-            "type": "securestring"
         }
     },
     "variables": {
@@ -80,7 +77,6 @@
                     "apiVersion": "2019-08-01",
                     "properties": {
                         "ASPNETCORE_ENVIRONMENT": "[parameters('aspNetCoreEnvironment')]",
-                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('appInsightsKey')]",                        
                         "DIAGNOSTICS_AZUREBLOBCONTAINERSASURL": "",
                         "DIAGNOSTICS_AZUREBLOBRETENTIONINDAYS": "90",
                         "WEBSITE_TIME_ZONE": "[parameters('webSiteTimeZone')]"
@@ -124,7 +120,6 @@
                     "apiVersion": "2019-08-01",
                     "properties": {
                         "ASPNETCORE_ENVIRONMENT": "[parameters('aspNetCoreEnvironment')]",
-                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('appInsightsKey')]",
                         "DIAGNOSTICS_AZUREBLOBCONTAINERSASURL": "",
                         "DIAGNOSTICS_AZUREBLOBRETENTIONINDAYS": "90",
                         "WEBSITE_TIME_ZONE": "[parameters('webSiteTimeZone')]"

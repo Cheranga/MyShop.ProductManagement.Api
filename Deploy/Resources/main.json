@@ -214,15 +214,11 @@
                     },
                     "websiteTimeZone": {
                         "value": "AUS Eastern Standard Time"
-                    },
-                    "appInsightsKey":{
-                        "value": "[reference(variables('appInsightsDeployment')).outputs.appInsightsKey.value]"
-                    }                    
+                    }
                 }
             },
             "dependsOn": [
-                "[variables('aspDeployment')]",
-                "[variables('appInsightsDeployment')]"
+                "[variables('aspDeployment')]"
             ]
         },
         {
@@ -247,12 +243,16 @@
                     },
                     "sqlServerConnectionString": {
                         "value": "[reference(variables('dbDeployment')).outputs.connectionString.value]"
+                    },
+                    "appInsightsKey":{
+                        "value":"[reference(variables('appInsightsDeployment')).outputs.appInsightsKey.value]"
                     }
                 }
             },
             "dependsOn": [
                 "[variables('dbDeployment')]",
-                "[variables('apiDeployment')]"
+                "[variables('apiDeployment')]",
+                "[variables('appInsightsDeployment')]"
             ]
         },
         {
