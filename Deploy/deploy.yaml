@@ -47,10 +47,9 @@ steps:
         $token = az storage container generate-sas --name $(sharedContainerName) --expiry $expireTime --permissions r --output tsv --connection-string $connection
 
         Write-Host "##vso[task.setvariable variable=storageSasToken]$token"
-
-        echo $token
-        echo $storageSasToken
-        echo $connection
+        # echo $token
+        # echo $storageSasToken
+        # echo $connection
 
   - task: AzureResourceManagerTemplateDeployment@3
     displayName: "Provision resources"
@@ -121,7 +120,7 @@ steps:
         $dbDeployment = "$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
         $testConnectionString=$(az deployment group show -g "$(rgName)" -n "$dbDeployment" --query properties.outputs.connectionString.value)
 
-        echo $testConnectionString
+        # echo $testConnectionString
         $(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe $testConnectionString
 
   # WE CAN USE THE BELOW POWERSHELL TASK AS AN ALTERNATIVE TO THE PREVIOUS AZURE CLI VERSION.
