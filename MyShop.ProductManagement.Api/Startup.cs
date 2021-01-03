@@ -1,8 +1,12 @@
 using System;
+using System.Linq;
+using System.Net.Mime;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +17,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using MyShop.ProductManagement.Api.Configs;
 using MyShop.ProductManagement.Api.DataAccess;
+using MyShop.ProductManagement.Api.Health;
 using MyShop.ProductManagement.Api.Services;
+using Newtonsoft.Json;
 
 namespace MyShop.ProductManagement.Api
 {
@@ -64,6 +70,16 @@ namespace MyShop.ProductManagement.Api
                     services.AddApplicationInsightsTelemetry(options => { Configuration.Bind("ApplicationInsights", options); });
                 }
             });
+
+            services.AddHealthChecks()
+                .AddCheck<DatabaseHealthCheck>("Database")
+                .AddCheck<SomeOtherCheck>("Other");
+
+            services.AddHealthChecksUI(settings =>
+            {
+                settings.SetEvaluationTimeInSeconds(10);
+                
+            }).AddInMemoryStorage();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,6 +97,30 @@ namespace MyShop.ProductManagement.Api
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseHealthChecks("/api/health", new HealthCheckOptions
+            {
+                ResponseWriter = (context, report) =>
+                {
+                    context.Response.ContentType = MediaTypeNames.Application.Json;
+
+                    var healthStatusReport = new
+                    {
+                        Status = report.Status.ToString(),
+                        Errors = report.Entries.Select(x => new
+                        {
+                            x.Key,
+                            Status = x.Value.Status.ToString(),
+                            x.Value.Description,
+                            x.Value.Exception
+                        }).ToList()
+                    };
+
+                    return context.Response.WriteAsync(JsonConvert.SerializeObject(healthStatusReport));
+                }
+            });
+            
+            app.UseHealthChecksUI();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
