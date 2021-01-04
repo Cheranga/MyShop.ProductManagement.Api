@@ -33,5 +33,26 @@ namespace MyShop.ProductManagement.Api.Services
 
             return Result<int>.Success(operation.Data);
         }
+
+        public async Task<Result<ProductDataModel>> GetProductAsync(GetProductRequest request)
+        {
+            _logger.LogInformation("Getting product {correlationId}", request.CorrelationId);
+
+            var operation = await _mediator.Send(new GetProductQuery(request.ProductCode));
+            if (!operation.Status)
+            {
+                _logger.LogError("{correlationId} error occured when getting the product.", request.CorrelationId);
+                return Result<ProductDataModel>.Failure("", "Error occured when getting the product.");
+            }
+
+            var product = operation.Data;
+
+            if (product == null)
+            {
+                return Result<ProductDataModel>.Failure("", "Product not found.");
+            }
+
+            return Result<ProductDataModel>.Success(product);
+        }
     }
 }

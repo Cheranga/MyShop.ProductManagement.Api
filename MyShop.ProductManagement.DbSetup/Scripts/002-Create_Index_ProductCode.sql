@@ -1,0 +1,1 @@
+﻿CREATE UNIQUE INDEX INDEX_PRODUCTCODE ON Products(ProductCode);

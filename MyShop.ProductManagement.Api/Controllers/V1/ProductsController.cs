@@ -57,7 +57,7 @@ namespace MyShop.ProductManagement.Api.Controllers.V1
             if (operation.Status)
             {
                 _logger.LogInformation("{correlationId} successfully upserted product.", createProductRequest.CorrelationId);
-                return CreatedAtAction(nameof(GetProductById), new { productId = operation.Data }, null);
+                return CreatedAtAction(nameof(GetProductById), new { productCode = operation.Data }, null);
             }
 
             _logger.LogError("{correlationId} {errorReason} error when upserting product.", createProductRequest.CorrelationId, operation.Validation.ToJson());
@@ -66,19 +66,26 @@ namespace MyShop.ProductManagement.Api.Controllers.V1
 
         }
 
-        [HttpGet("{productId}")]
+        [HttpGet("{productCode}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DisplayProduct))]
-        public async Task<IActionResult> GetProductById(string productId)
+        public async Task<IActionResult> GetProductById([FromRoute]string productCode, [FromHeader(Name = "correlationId")] string correlationId)
         {
-            await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
-
-            var dto = new DisplayProduct
+            correlationId = string.IsNullOrWhiteSpace(correlationId) ? Guid.NewGuid().ToString("N") : correlationId;
+            var getProductRequest = new GetProductRequest
             {
-                Id = productId,
-                Name = "TODO: Get the product name from the storage"
+                CorrelationId = correlationId,
+                ProductCode = productCode
             };
 
-            return Ok(dto);
+            var operation = await _productService.GetProductAsync(getProductRequest);
+            if (operation.Status)
+            {
+                _logger.LogInformation("{correlationId} successfully returned product", correlationId);
+                return Ok(operation.Data);
+            }
+
+            _logger.LogWarning("{correlationId} {message}",correlationId, operation.Validation.ToJson());
+            return NotFound();
         }
     }
 }

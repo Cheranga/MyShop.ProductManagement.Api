@@ -1,18 +1,32 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
+using MyShop.ProductManagement.Api.Configs;
 
 namespace MyShop.ProductManagement.Api.DataAccess
 {
     public interface IDbConnectionFactory
     {
-        IDbConnection GetConnection(string connectionString);
+        IDbConnection GetConnection();
     }
 
     public class DbConnectionFactory : IDbConnectionFactory
     {
-        public IDbConnection GetConnection(string connectionString)
+        private readonly string _connectionString;
+
+        public DbConnectionFactory(DatabaseConfig config)
         {
-            return new SqlConnection(connectionString);
+            if (string.IsNullOrWhiteSpace(config?.ConnectionString))
+            {
+                throw new ArgumentNullException(nameof(DatabaseConfig.ConnectionString));
+            }
+
+            _connectionString = config.ConnectionString;
+        }
+
+        public IDbConnection GetConnection()
+        {
+            return new SqlConnection(_connectionString);
         }
     }
 }

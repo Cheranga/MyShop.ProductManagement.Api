@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using FluentValidation.Results;
 using Newtonsoft.Json;
 
@@ -18,6 +19,11 @@ namespace MyShop.ProductManagement.Api.Extensions
 
             var serializedErrors = JsonConvert.SerializeObject(validationResult.Errors);
             return serializedErrors;
+        }
+
+        public static IRuleBuilderOptions<T, string> NotNullOrEmpty<T>(this IRuleBuilder<T, string> ruleBuilder)
+        {
+            return ruleBuilder.NotNull().NotEmpty();
         }
     }
 }
