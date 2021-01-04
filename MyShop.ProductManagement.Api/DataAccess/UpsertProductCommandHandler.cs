@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Dapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using MyShop.ProductManagement.Api.Configs;
 using MyShop.ProductManagement.Api.Core;
 
 namespace MyShop.ProductManagement.Api.DataAccess
@@ -21,16 +20,12 @@ namespace MyShop.ProductManagement.Api.DataAccess
                                              "output inserted.Id, inserted.ProductCode, inserted.ProductName " +
                                              "where id=@Id";
 
-        private readonly string _connectionString;
-
-
         private readonly IDbConnectionFactory _dbConnectionFactory;
         private readonly ILogger<UpsertProductCommandHandler> _logger;
 
 
-        public UpsertProductCommandHandler(DatabaseConfig databaseConfig, IDbConnectionFactory dbConnectionFactory, ILogger<UpsertProductCommandHandler> logger)
+        public UpsertProductCommandHandler(IDbConnectionFactory dbConnectionFactory, ILogger<UpsertProductCommandHandler> logger)
         {
-            _connectionString = databaseConfig.ConnectionString;
             _dbConnectionFactory = dbConnectionFactory;
             _logger = logger;
         }
@@ -41,7 +36,7 @@ namespace MyShop.ProductManagement.Api.DataAccess
             {
                 var command = request.Id <= 0 ? InsertCommand : UpdateCommand;
 
-                using (var connection = _dbConnectionFactory.GetConnection(_connectionString))
+                using (var connection = _dbConnectionFactory.GetConnection())
                 {
                     var upsertedProducts = await connection.QueryAsync<ProductDataModel>(command, request);
                     var upsertedProduct = upsertedProducts.FirstOrDefault();

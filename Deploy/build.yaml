@@ -1,16 +1,9 @@
 steps:
 
-  # - task: UseDotNet@2
-  #   inputs:
-  #     version: '5.0.x'
-  #     performMultiLevelLookup: true
-  #     includePreviewVersions: true # Required for preview versions
-
   - task: DotNetCoreCLI@2
     displayName: 'Build $(platformConfiguration)'
     inputs:
-      command: "build"
-      # arguments: '--configuration $(BuildConfiguration)'
+      command: "build"      
       projects: '**/*.csproj'
 
   - task: DotNetCoreCLI@2
@@ -21,7 +14,7 @@ steps:
       arguments: '--configuration Release'      
 
   - task: DotNetCoreCLI@2
-    displayName: "Dotnet Publish"
+    displayName: "Publish web API"
     inputs:
       command: "publish"
       publishWebProjects: true
@@ -29,13 +22,35 @@ steps:
       zipAfterPublish: True
 
   - task: PublishBuildArtifacts@1
-    displayName: "Publish Build Artifact"
+    displayName: "Create artifact for web API"
     inputs:
       pathtoPublish: "$(Build.ArtifactStagingDirectory)"
       artifactName: "WebApp"
 
   - task: PublishBuildArtifacts@1
-    displayName: "Copy ARM Templates"
+    displayName: "Create artifacts for ARM templates"
     inputs:
       pathtoPublish: $(Build.Repository.LocalPath)/Deploy/Resources
-      artifactName: "deploy"      
+      artifactName: "deploy"
+
+  - task: DotNetCoreCLI@2
+    displayName: "Publish database migration console app"
+    inputs:
+      command: publish 
+      arguments: -r win-x64 -p:PublishSingleFile=True --self-contained false -o $(Build.ArtifactStagingDirectory)
+      projects: '**/MyShop.ProductManagement.DbSetup.csproj'
+      publishWebProjects: false
+      zipAfterPublish: False
+    enabled: true  
+
+  - task: PublishBuildArtifacts@1
+    displayName: "Create artifact for database migration"
+    inputs:
+      pathtoPublish: "$(Build.ArtifactStagingDirectory)/MyShop.ProductManagement.DbSetup/MyShop.ProductManagement.DbSetup.exe"
+      artifactName: "DbConsoleApp"              
+
+  - task: PublishBuildArtifacts@1
+    displayName: "Create artifact for scripts"
+    inputs:
+      pathtoPublish: Deploy/Scripts
+      artifactName: "scripts"                    

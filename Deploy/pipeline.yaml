@@ -51,5 +51,8 @@ stages:
       runOnce:
         deploy:
           steps:
-          - template: 'deploy.yaml'        
+          - template: 'deploy.yaml'  
+            parameters:
+              buildNumber: $(Build.BuildNumber)
+                
         

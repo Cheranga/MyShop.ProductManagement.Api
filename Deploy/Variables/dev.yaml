@@ -8,6 +8,8 @@ variables:
   value: "rg-$(apiName)-$(environmentName)"
 - name: rgLocation
   value: Australia Southeast  
+- name: sharedRgName
+  value: rg-shared-$(environmentName)
 - name: planSku
   value: "S1"
 - name: planCapacity
@@ -22,3 +24,11 @@ variables:
   value: "sqldb-$(apiName)-$(environmentName)"  
 - name: adminUserName
   value: "admin-$(apiName)-$(environmentName)"
+- name: sharedRgLocation
+  value: Australia Southeast    
+- name: sharedStorageName
+  value: "sg$(apiName)$(environmentName)"
+- name: sharedContainerName
+  value: "armtemplates"  
+- name: deploymentsOlderThan
+  value: -1  

@@ -1,8 +1,186 @@
-steps:
+parameters:
+  - name: buildNumber
+    type: string
 
-- template: 'Steps/deployResourceGroup.yaml'
-- template: 'Steps/deployAppServicePlan.yaml'
-- template: 'Steps/deploySqlServerAndDatabase.yaml'
-- template: 'Steps/deployWebApi.yaml'
-- template: 'Steps/deployKeyVault.yaml'
-- template: 'Steps/deployCode.yaml'
+steps:
+  - task: AzureResourceManagerTemplateDeployment@3
+    displayName: "Create resource group"
+    inputs:
+      deploymentScope: "Subscription"
+      azureResourceManagerConnection: "$(azureSubscription)"
+      location: "$(rgLocation)"
+      deploymentMode: "Incremental"
+      csmFile: "$(Pipeline.Workspace)/deploy/ResourceGroup/template.json"
+      csmParametersFile: "$(Pipeline.Workspace)/deploy/ResourceGroup/template.parameters.json"
+      overrideParameters: |
+        -rgName "$(rgName)" 
+        -rgLocation "$(rgLocation)"
+        
+  - task: AzurePowerShell@4
+    displayName: "Delete old deployments"
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      scriptType: 'inlineScript' # Optional. Options: filePath, inline
+      azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion
+      inline: |        
+        $deployments = Get-AzResourceGroupDeployment -ResourceGroupName $(rgName) | Where-Object Timestamp -lt ((Get-Date).AddDays($(deploymentsOlderThan)))
+
+        foreach ($deployment in $deployments) {
+          Remove-AzResourceGroupDeployment -ResourceGroupName $(rgName) -Name $deployment.DeploymentName
+          Write-Host 'Removed Deployment: ' $deployment.DeploymentName 
+        }        
+
+  - task: AzureCLI@2
+    displayName: "Upload ARM templates and generate SAS token"
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      scriptType: "pscore"
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        az storage account create -n "$(sharedStorageName)" -g "$(sharedRgName)" -l "$(sharedRgLocation)" 
+        az storage container create -n "$(sharedContainerName)" --account-name "$(sharedStorageName)" --auth-mode login 
+        $accountKey = (az storage account keys list -g "$(sharedRgName)" -n "$(sharedStorageName)" | ConvertFrom-Json)[0].value
+        az storage blob upload-batch --source "$(Pipeline.Workspace)/deploy/" --pattern *.json --destination "$(sharedContainerName)" --account-name $(sharedStorageName) --account-key $accountKey
+
+        $expireTime = $(date -u -d '30 minutes' +%Y-%m-%dT%H:%MZ)
+        $connection = az storage account show-connection-string -g "$(sharedRgName)" --name "$(sharedStorageName)" --query connectionString      
+        $token = az storage container generate-sas --name $(sharedContainerName) --expiry $expireTime --permissions r --output tsv --connection-string $connection
+
+        Write-Host "##vso[task.setvariable variable=storageSasToken]$token"
+        # echo $token
+        # echo $storageSasToken
+        # echo $connection
+
+  - task: AzureResourceManagerTemplateDeployment@3
+    displayName: "Provision resources"
+    inputs:
+      azureResourceManagerConnection: "$(azureSubscription)"
+      deploymentName: "main-$(apiName)-$(environmentName)-${{parameters.buildNumber}}-deployment"
+      deploymentScope: "Resource Group"
+      deploymentMode: "Incremental"      
+      location: "$(rgLocation)"
+      action: "Create Or Update Resource Group"
+      resourceGroupName: "$(rgName)"
+
+      csmFile: "$(Pipeline.Workspace)/deploy/main.json"
+      overrideParameters: |
+        -buildNumber "${{parameters.buildNumber}}" 
+        -storageName "$(sharedStorageName)" 
+        -storageContainer "$(sharedContainerName)" 
+        -templateSas "$(storageSasToken)" 
+        -rgName "$(rgName)" 
+        -rgLocation "$(rgLocation)" 
+        -planName "plan-$(apiName)-$(environmentName)" 
+        -planSku "$(planSku)" 
+        -planCapacity "$(planCapacity)" 
+        -serverName "$(serverName)"         
+        -databaseName "$(databaseName)" 
+        -adminUserName "$(adminUserName)" 
+        -adminPassword "$(adminPassword)" 
+        -allowedIpAddresses "$(allowedIpAddresses)" 
+        -apiName "app-$(apiName)-$(environmentName)" 
+        -aspNetCoreEnvironment "$(aspNetCoreEnvironment)" 
+        -keyVaultName "kv-$(apiName)-$(environmentName)"
+
+#  The below two tasks ("Setting up variables to be transformed in configurations" and "Setup firewall rule for build agent" can be used to transform web API configurations)
+  # - task: AzurePowerShell@4
+  #   displayName: "Setting up variables to be transformed in configurations"
+  #   inputs:
+  #     azureSubscription: "$(azureSubscription)"
+  #     scriptType: 'inlineScript' # Optional. Options: filePath, inline
+  #     azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion
+  #     inline: |
+  #       $psAppInsightsDeployment="app-$(apiName)-$(environmentName)insights-"+"${{parameters.buildNumber}}-deployment"
+  #       $psAppInsightsKey=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psAppInsightsDeployment").Outputs.appInsightsKey.value
+        
+  #       Write-Host "##vso[task.setvariable variable=ApplicationInsights.InstrumentationKey]$psAppInsightsKey"
+
+  # - task: FileTransform@1
+  #   displayName: "Transform configurations"
+  #   inputs:
+  #     folderPath: "$(Pipeline.Workspace)/WebApp/MyShop.ProductManagement.Api.zip"
+  #     fileType: json
+  #     targetFiles: "**/appsettings.$(aspNetCoreEnvironment).json"
+
+  - task: AzurePowerShell@2
+    displayName: "Setup firewall rule for build agent"
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      ScriptPath: "$(Pipeline.Workspace)/scripts/setupfirewall.ps1"
+      ScriptArguments: "$(serverName) $(rgName)"
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzureCLI@2
+    displayName: "Migrate the database"
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      scriptType: "pscore"
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        $dbDeployment = "$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
+        $testConnectionString=$(az deployment group show -g "$(rgName)" -n "$dbDeployment" --query properties.outputs.connectionString.value)
+
+        # echo $testConnectionString
+        $(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe $testConnectionString
+
+  # WE CAN USE THE BELOW POWERSHELL TASK AS AN ALTERNATIVE TO THE PREVIOUS AZURE CLI VERSION.
+  # - task: AzurePowerShell@4
+  #   displayName: "Migrate database"
+  #   inputs:
+  #     azureSubscription: "$(azureSubscription)"
+  #     scriptType: 'inlineScript' # Optional. Options: filePath, inline
+  #     azurePowerShellVersion: 'latestVersion' # Required. Options: latestVersion, otherVersion
+  #     inline: |
+  #       $psDbDeployment="$(serverName)"+"-"+"${{parameters.buildNumber}}"+"-deployment"
+  #       $psConnectionString=(Get-AzResourceGroupDeployment -ResourceGroupName "$(rgName)" -Name "$psDbDeployment").Outputs.connectionString.value
+  #       echo $psConnectionString
+  #       echo "$(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe"
+  #       $(Pipeline.Workspace)/DbConsoleApp/MyShop.ProductManagement.DbSetup.exe $psConnectionString
+
+  - task: AzurePowerShell@2
+    displayName: "Remove firewall rule for build agent"
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      ScriptPath: "$(Pipeline.Workspace)/scripts/removefirewall.ps1"
+      ScriptArguments: "$(serverName) $(rgName)"
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzureRmWebAppDeployment@3
+    displayName: "Deploy to Staging"
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      WebAppName: "app-$(apiName)-$(environmentName)"
+      DeployToSlotFlag: true
+      ResourceGroupName: "$(rgName)"
+      SlotName: staging
+      Package: "$(Pipeline.Workspace)/WebApp/MyShop.ProductManagement.Api.zip"
+      ScriptType: "Inline Script"
+      enableXmlVariableSubstitution: true
+
+  - task: AzureAppServiceManage@0
+    displayName: "Start Staging Slot"
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      action: "Start Azure App Service"
+      webAppName: "app-$(apiName)-$(environmentName)"
+      specifySlotOrASE: true
+      resourceGroupName: "$(rgName)"
+      slot: staging
+
+  - task: AzureAppServiceManage@0
+    displayName: "Swap to Production"
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      webAppName: "app-$(apiName)-$(environmentName)"
+      resourceGroupName: "$(rgName)"
+      sourceSlot: staging
+
+  - task: AzureAppServiceManage@0
+    displayName: "Stop Staging Slot"
+    inputs:
+      azureSubscription: "$(azureSubscription)"
+      action: "Stop Azure App Service"
+      webAppName: "app-$(apiName)-$(environmentName)"
+      specifySlotOrASE: true
+      resourceGroupName: "$(rgName)"
+      slot: staging

@@ -25,6 +25,12 @@
             "metadata": {
                 "description": "The SQL server connection string to access the databases."
             }
+        },
+        "appInsightsKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The application insights key"
+            }
         }
     },    
     "resources": [
@@ -85,6 +91,17 @@
                     ],
                     "properties": {
                         "value": "[parameters('sqlServerConnectionString')]"
+                    }
+                },
+                {
+                    "type":"secrets",
+                    "name": "ApplicationInsights--InstrumentationKey",
+                    "apiVersion": "2016-10-01",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+                    ],
+                    "properties": {
+                        "value": "[parameters('appInsightsKey')]"
                     }
                 }
             ]

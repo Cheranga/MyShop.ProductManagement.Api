@@ -13,6 +13,9 @@
         },
         "sqlServerConnectionString": {
             "value": "TBD"
+        },
+        "appInsightsKey": {
+            "value": "TBD"
         }
     }
 }

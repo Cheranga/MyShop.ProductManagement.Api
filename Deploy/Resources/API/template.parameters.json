@@ -19,6 +19,9 @@
         },
         "websiteTimeZone": {
             "value": "AUS Eastern Standard Time"
+        },
+        "appInsightsKey": {
+            "value": "TBD"
         }
     }
 }

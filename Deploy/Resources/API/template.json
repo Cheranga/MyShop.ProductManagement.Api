@@ -20,6 +20,9 @@
         "websiteTimeZone": {
             "type": "string",
             "defaultValue": "AUS Eastern Standard Time"
+        },
+        "appInsightsKey": {
+            "type": "securestring"
         }
     },
     "variables": {
@@ -35,8 +38,7 @@
             "location": "[parameters('apiLocation')]",
             "properties": {
                 "name": "[parameters('apiName')]",
-                // "serverFarmId": "[concat('/subscriptions/', variables('subscriptionId'), '/resourcegroups/', parameters('rgName'), '/providers/Microsoft.Web/serverfarms/', parameters('planName'))]",
-                "serverFarmId":"[resourceId('Microsoft.Web/serverfarms', parameters('planName'))]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('planName'))]",
                 "hostingEnvironment": null,
                 "hostNameSslStates": [
                     {
@@ -78,6 +80,7 @@
                     "apiVersion": "2019-08-01",
                     "properties": {
                         "ASPNETCORE_ENVIRONMENT": "[parameters('aspNetCoreEnvironment')]",
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('appInsightsKey')]",                        
                         "DIAGNOSTICS_AZUREBLOBCONTAINERSASURL": "",
                         "DIAGNOSTICS_AZUREBLOBRETENTIONINDAYS": "90",
                         "WEBSITE_TIME_ZONE": "[parameters('webSiteTimeZone')]"
@@ -121,8 +124,9 @@
                     "apiVersion": "2019-08-01",
                     "properties": {
                         "ASPNETCORE_ENVIRONMENT": "[parameters('aspNetCoreEnvironment')]",
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('appInsightsKey')]",
                         "DIAGNOSTICS_AZUREBLOBCONTAINERSASURL": "",
-                        "DIAGNOSTICS_AZUREBLOBRETENTIONINDAYS": "90",                        
+                        "DIAGNOSTICS_AZUREBLOBRETENTIONINDAYS": "90",
                         "WEBSITE_TIME_ZONE": "[parameters('webSiteTimeZone')]"
                     },
                     "dependsOn": [
