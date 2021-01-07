@@ -3,7 +3,7 @@ using MyShop.ProductManagement.Core;
 
 namespace MyShop.ProductManagement.DataAccess.CommandHandlers
 {
-    public class UpsertProductCommand : IRequest<Result<int>>
+    public class UpsertProductCommand : IRequest<Result<string>>
     {
         public UpsertProductCommand(int id, string productCode, string productName)
         {

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using MyShop.ProductManagement.Api.Extensions;
-using MyShop.ProductManagement.Api.Requests;
+using MyShop.ProductManagement.Services.Requests;
 
 namespace MyShop.ProductManagement.Api.Validators
 {

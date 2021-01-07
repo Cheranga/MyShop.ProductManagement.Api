@@ -10,7 +10,7 @@ using MyShop.ProductManagement.DataAccess.Models;
 
 namespace MyShop.ProductManagement.DataAccess.CommandHandlers
 {
-    public class UpsertProductCommandHandler : IRequestHandler<UpsertProductCommand, Result<int>>
+    public class UpsertProductCommandHandler : IRequestHandler<UpsertProductCommand, Result<string>>
     {
         private const string InsertCommand = "insert into Products (ProductCode, ProductName) " +
                                              "output inserted.Id, inserted.ProductCode, inserted.ProductName " +
@@ -31,7 +31,7 @@ namespace MyShop.ProductManagement.DataAccess.CommandHandlers
             _logger = logger;
         }
 
-        public async Task<Result<int>> Handle(UpsertProductCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(UpsertProductCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -44,10 +44,10 @@ namespace MyShop.ProductManagement.DataAccess.CommandHandlers
                     if (upsertedProduct == null)
                     {
                         _logger.LogError("Error when upserting product {command}", request);
-                        return Result<int>.Failure("", "Error occured when upserting product.");
+                        return Result<string>.Failure("", "Error occured when upserting product.");
                     }
 
-                    return Result<int>.Success(upsertedProduct.Id);
+                    return Result<string>.Success(upsertedProduct.ProductCode);
                 }
             }
             catch (Exception exception)
@@ -55,7 +55,7 @@ namespace MyShop.ProductManagement.DataAccess.CommandHandlers
                 _logger.LogError(exception, "Error occured when upserting product {command}", request);
             }
 
-            return Result<int>.Failure("", "Error occured when upserting product.");
+            return Result<string>.Failure("", "Error occured when upserting product.");
         }
     }
 }

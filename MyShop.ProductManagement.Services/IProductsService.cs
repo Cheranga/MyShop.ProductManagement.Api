@@ -7,7 +7,7 @@ namespace MyShop.ProductManagement.Api.Services
 {
     public interface IProductsService
     {
-        Task<Result<int>> UpsertProductAsync(UpsertProductRequest request);
+        Task<Result<string>> UpsertProductAsync(UpsertProductRequest request);
         Task<Result<ProductDataModel>> GetProductAsync(GetProductRequest request);
     }
 }

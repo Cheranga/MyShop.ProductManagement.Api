@@ -20,7 +20,7 @@ namespace MyShop.ProductManagement.Api.Services
             _logger = logger;
         }
 
-        public async Task<Result<int>> UpsertProductAsync(UpsertProductRequest request)
+        public async Task<Result<string>> UpsertProductAsync(UpsertProductRequest request)
         {
             _logger.LogInformation("Upserting product {correlationId}", request.CorrelationId);
 
@@ -28,12 +28,12 @@ namespace MyShop.ProductManagement.Api.Services
             if (!operation.Status)
             {
                 _logger.LogError("{correlationId} Error occured when upserting product. {upsertProductRequest}", request.CorrelationId, request);
-                return Result<int>.Failure(operation.Validation);
+                return Result<string>.Failure(operation.Validation);
             }
 
             _logger.LogInformation("{correlationId} Upserting product successful. {upsertProductRequest}", request.CorrelationId, request);
 
-            return Result<int>.Success(operation.Data);
+            return Result<string>.Success(operation.Data);
         }
 
         public async Task<Result<ProductDataModel>> GetProductAsync(GetProductRequest request)

@@ -5,6 +5,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Core\**" />
+    <Compile Remove="DataAccess\**" />
+    <Compile Remove="Requests\**" />
+    <Compile Remove="Services\**" />
+    <Content Remove="Core\**" />
+    <Content Remove="DataAccess\**" />
+    <Content Remove="Requests\**" />
+    <Content Remove="Services\**" />
+    <EmbeddedResource Remove="Core\**" />
+    <EmbeddedResource Remove="DataAccess\**" />
+    <EmbeddedResource Remove="Requests\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Core\**" />
+    <None Remove="DataAccess\**" />
+    <None Remove="Requests\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Models\" />
   </ItemGroup>
 
@@ -25,6 +44,10 @@
     <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="3.1.10" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyShop.ProductManagement.Services\MyShop.ProductManagement.Services.csproj" />
   </ItemGroup>
 
 </Project>

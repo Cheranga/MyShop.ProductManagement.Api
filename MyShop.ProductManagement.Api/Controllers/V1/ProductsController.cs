@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyShop.ProductManagement.Api.Extensions;
-using MyShop.ProductManagement.Api.Requests;
 using MyShop.ProductManagement.Api.Responses;
 using MyShop.ProductManagement.Api.Services;
+using MyShop.ProductManagement.Services.Requests;
 
 namespace MyShop.ProductManagement.Api.Controllers.V1
 {

@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using MyShop.ProductManagement.Api.Core;
 using MyShop.ProductManagement.Api.DataAccess;
-using MyShop.ProductManagement.Api.Requests;
+using MyShop.ProductManagement.Services.Requests;
 
 namespace MyShop.ProductManagement.Api.Services
 {
