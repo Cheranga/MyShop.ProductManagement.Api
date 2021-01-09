@@ -15,7 +15,7 @@ steps:
       overrideParameters: |
         -rgName "$(rgName)" 
         -rgLocation "$(rgLocation)" 
-        -createNewRd $(createNewRg) 
+        -createNewRg $(createNewRg) 
         
   - task: AzurePowerShell@4
     displayName: "Delete old deployments"
