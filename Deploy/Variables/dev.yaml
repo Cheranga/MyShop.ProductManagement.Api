@@ -32,3 +32,5 @@ variables:
   value: "armtemplates"  
 - name: deploymentsOlderThan
   value: -1  
+- name: createNewRg
+  value: true  

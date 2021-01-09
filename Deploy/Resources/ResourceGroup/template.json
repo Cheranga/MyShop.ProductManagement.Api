@@ -14,10 +14,18 @@
         "metadata": {
           "description": "Location for the Resource Group"
         }
-      }      
+      },
+      "createNewRg": {
+        "type": "bool",
+        "defaultValue": true,
+        "metadata": {
+          "description": "A condition to create a new resource group or not."
+        }
+      }
     },    
     "resources": [
       {
+        "condition":"[parameters('createNewRg')]",
         "type": "Microsoft.Resources/resourceGroups",
         "apiVersion": "2018-05-01",
         "location": "[parameters('rgLocation')]",

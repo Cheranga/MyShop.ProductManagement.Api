@@ -14,7 +14,8 @@ steps:
       csmParametersFile: "$(Pipeline.Workspace)/deploy/ResourceGroup/template.parameters.json"
       overrideParameters: |
         -rgName "$(rgName)" 
-        -rgLocation "$(rgLocation)"
+        -rgLocation "$(rgLocation)" 
+        -createNewRd $(createNewRg) 
         
   - task: AzurePowerShell@4
     displayName: "Delete old deployments"
@@ -82,7 +83,7 @@ steps:
         -aspNetCoreEnvironment "$(aspNetCoreEnvironment)" 
         -keyVaultName "kv-$(apiName)-$(environmentName)"
 
-#  The below two tasks ("Setting up variables to be transformed in configurations" and "Setup firewall rule for build agent" can be used to transform web API configurations)
+#  The below two tasks ("Setting up variables to be transformed in configurations" and "Transform configurations" can be used to transform web API configurations)
   # - task: AzurePowerShell@4
   #   displayName: "Setting up variables to be transformed in configurations"
   #   inputs:
